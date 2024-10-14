@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
@@ -72,4 +73,5 @@ public class UsuarioService {
             return modelMapper.map(usuario, UsuarioData.class);
         }
     }
+
 }
