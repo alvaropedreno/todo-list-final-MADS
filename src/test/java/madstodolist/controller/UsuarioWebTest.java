@@ -9,8 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -92,5 +97,35 @@ public class UsuarioWebTest {
                         .param("eMail","ana.garcia@gmail.com")
                         .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
+    }
+
+    @Test
+    public void listaUsuarios() throws Exception {
+        // GIVEN
+        // Moqueamos el método usuarioService.allUsuarios para que devuelva
+        // una lista de usuarios
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        UsuarioData juanLopez = new UsuarioData();
+        juanLopez.setNombre("Juan López");
+        juanLopez.setEmail("juan.lopez@gmail.com");
+        juanLopez.setId(2L);
+
+
+        when(usuarioService.allUsuarios())
+                .thenReturn(Arrays.asList(anaGarcia, juanLopez));
+
+        // WHEN, THEN
+        // Realizamos una petición GET al listado de usuarios y
+        // se debe devolver una página que contenga los nombres de los usuarios
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(content().string(allOf(
+                        containsString("ana.garcia@gmail.com"),
+                        containsString("juan.lopez@gmail.com")
+                )));
+
     }
 }
