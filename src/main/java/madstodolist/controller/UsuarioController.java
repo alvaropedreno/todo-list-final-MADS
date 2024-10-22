@@ -25,4 +25,12 @@ public class UsuarioController {
         return "listaUsuarios";
     }
 
+    @GetMapping("/registrados/{id}")
+    public String detalleUsuario(@PathVariable Long id, Model model) {
+        UsuarioData usuario = usuarioService.findById(id);
+        model.addAttribute("usuario", usuario);
+        return "detalleUsuario";
+    }
+
+
 }

@@ -9,7 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
@@ -128,4 +130,33 @@ public class UsuarioWebTest {
                 )));
 
     }
+
+    @Test
+    public void getDetallesDevuelveDetalles() throws Exception {
+        // GIVEN
+        // Moqueamos el método usuarioService.findById para que devuelva
+        // un usuario determinado
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(2L);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        anaGarcia.setFechaNacimiento(sdf.parse("2001-02-03"));
+
+        // queremos que en la pagina /registrados se pulse el boton "ver detalles" el cual nos lleve a la pagina /registrados/2
+        when(usuarioService.findById(2L))
+                .thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición GET a los detalles de un usuario y
+        // se debe devolver una página que contenga los detalles del usuario
+        this.mockMvc.perform(get("/registrados/2"))
+                .andExpect(content().string(allOf(
+                        containsString("Ana García"),
+                        containsString("ana.garcia@gmail.com"),
+                        containsString(sdf.parse("2001-02-03").toString())
+                )));
+
+    }
+
 }
