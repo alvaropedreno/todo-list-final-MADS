@@ -1,6 +1,5 @@
 package madstodolist.service;
 
-import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
@@ -82,5 +81,17 @@ public class UsuarioService {
         return usuarios.stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    // funcion que devuelve si existe algun usuario administrador en la aplicación
+    @Transactional(readOnly = true)
+    public boolean existeAdmin() {
+        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+        for (Usuario usuario : usuarios) {
+            if (usuario.getAdmin()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
