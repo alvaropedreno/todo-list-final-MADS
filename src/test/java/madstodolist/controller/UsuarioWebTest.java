@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -156,6 +157,58 @@ public class UsuarioWebTest {
                         containsString("ana.garcia@gmail.com"),
                         containsString(sdf.parse("2001-02-03").toString())
                 )));
+
+    }
+
+    @Test
+    public void formularioNoApareceAdmin() throws Exception{
+        // GIVEN
+        // Moqueamos el método usuarioService.existeAdmin para que devuelva
+        // false
+        when(usuarioService.existeAdmin())
+                .thenReturn(true);
+
+        // WHEN, THEN
+        // Realizamos una petición GET al formulario de registro y
+        // se debe devolver una página que no contenga el campo admin
+        this.mockMvc.perform(get("/registro"))
+                .andExpect(content().string(allOf(
+                        containsString("Correo electrónico"),
+                        containsString("Nombre"),
+                        containsString("Contraseña"),
+                        containsString("Fecha de nacimiento"),
+                        not(containsString("Administrador"))
+                )));
+
+    }
+
+    @Test
+    void servicioLoginUsuarioAdminOK() throws Exception {
+        // GIVEN
+        // Moqueamos la llamada a usuarioService.login para que
+        // devuelva un LOGIN_OK y la llamada a usuarioServicie.findByEmail
+        // para que devuelva un usuario determinado.
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(true);
+
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición POST al login pasando los datos
+        // esperados en el mock, la petición devolverá una redirección a la
+        // URL con las tareas del usuario
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password","12345678"))
+                        .andExpect(status().is3xxRedirection())
+                        .andExpect(redirectedUrl("/registrados"));
 
     }
 

@@ -153,4 +153,27 @@ public class UsuarioServiceTest {
         assertThat(usuario.getEmail()).isEqualTo("user@ua");
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
     }
+
+    @Test
+    public void servicioConsultaAdmin() {
+        // GIVEN
+        // Un usuario administrador en la BD
+
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("admin@ua");
+        usuario.setNombre("Admin Ejemplo");
+        usuario.setPassword("123");
+        usuario.setAdmin(true);
+        usuarioService.registrar(usuario);
+
+        // WHEN
+        // consultamos si existe algún usuario administrador en la BD
+
+        boolean existeAdmin = usuarioService.existeAdmin();
+
+        // THEN
+        // el resultado es true
+
+        assertThat(existeAdmin).isTrue();
+    }
 }
