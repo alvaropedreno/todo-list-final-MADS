@@ -19,13 +19,23 @@
         <tr>
           <th>Id</th>
           <th>Correo electronico</th>
+          <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="usuario: ${usuarios}">
           <td th:text="${usuario.id}"></td>
           <td th:text="${usuario.email}"></td>
-          <td><a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}"/>ver detalles</a></td>
+          <td>
+            <a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}" style="margin-right: 5px;">ver detalles</a>
+            <form th:action="@{/toggleBloqueo/{id}(id=${usuario.id})}" method="post" style="display: inline;">
+              <button type="submit"
+                      th:text="${usuario.bloqueado ? 'Desbloquear' : 'Bloquear'}"
+                      class="btn btn-warning btn-xs">
+              </button>
+            </form>
+          </td>
+
         </tr>
         </tbody>
       </table>

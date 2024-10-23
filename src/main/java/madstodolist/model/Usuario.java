@@ -25,6 +25,7 @@ public class Usuario implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
     private Boolean admin = false;
+    private Boolean bloqueado = false;
 
     // La relación es lazy por defecto,
     // es necesario acceder a la lista de tareas para que se carguen
@@ -88,6 +89,14 @@ public class Usuario implements Serializable {
 
     public void setAdmin(Boolean admin) {
         this.admin = admin;
+    }
+
+    public Boolean getBloqueado(){
+        return bloqueado;
+    }
+
+    public void setBloqueado(Boolean bloqueado){
+        this.bloqueado = bloqueado;
     }
 
     // Getters y setters de la relación
