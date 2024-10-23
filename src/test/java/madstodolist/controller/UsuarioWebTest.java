@@ -183,7 +183,7 @@ public class UsuarioWebTest {
     }
 
     @Test
-    void servicioLoginUsuarioAdminOK() throws Exception {
+    public void servicioLoginUsuarioAdminOK() throws Exception {
         // GIVEN
         // Moqueamos la llamada a usuarioService.login para que
         // devuelva un LOGIN_OK y la llamada a usuarioServicie.findByEmail
@@ -212,4 +212,20 @@ public class UsuarioWebTest {
 
     }
 
+    @Test
+    public void servicioLoginUsuarioBlocked() throws Exception{
+        // GIVEN
+        // Moqueamos el método usuarioService.login para que devuelva
+        // USER_NOT_FOUND
+        when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.USER_BLOCKED);
+
+        // WHEN, THEN
+        // Realizamos una petición POST con los datos del usuario mockeado y
+        // se debe devolver una página que contenga el mensaja "No existe usuario"
+        this.mockMvc.perform(post("/login")
+                        .param("eMail","pepito.perez@gmail.com")
+                        .param("password","12345678"))
+                .andExpect(content().string(containsString("Usuario bloqueado")));
+    }
 }
