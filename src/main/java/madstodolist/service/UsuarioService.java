@@ -77,7 +77,6 @@ public class UsuarioService {
         }
     }
 
-<<<<<<< HEAD
     // funcion que devuelve todos los usuarios registrados en la aplicación
     @Transactional(readOnly = true)
     public List<UsuarioData> allUsuarios() {
@@ -109,6 +108,4 @@ public class UsuarioService {
         usuario.setBloqueado(!usuario.getBloqueado());
         usuarioRepository.save(usuario);
     }
-=======
->>>>>>> de8f269933f2e7d5d33d0126c5cf10b06d29186c
 }
