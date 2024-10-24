@@ -29,6 +29,7 @@ public class HomeController {
         else {
             UsuarioData usuarioLoggeado = usuarioService.findById(usuarioID);
             model.addAttribute("usuarioLoggeado", usuarioLoggeado);
+
         }
 
 

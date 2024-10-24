@@ -82,6 +82,7 @@ public class TareaController {
         }
 
         comprobarUsuarioLogeado(tarea.getUsuarioId());
+
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
 
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
