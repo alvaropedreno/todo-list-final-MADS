@@ -4,6 +4,7 @@
 <head th:replace="fragments :: head (titulo='Detalles usuario')"></head>
 
 <body>
+<div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado != null ? usuarioLoggeado : null})"></div>
 <div class="container-fluid">
     <div class="container mt-5">
         <div class="card">

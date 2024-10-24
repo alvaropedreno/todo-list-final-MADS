@@ -248,4 +248,48 @@ public class UsuarioWebTest {
                         .param("password","12345678"))
                 .andExpect(content().string(containsString("Usuario bloqueado")));
     }
+
+    @Test
+    public void getNavbarUsuarioNoLoggeado() throws Exception{
+        // GIVEN
+        // Moqueamos el método usuarioService.login para que devuelva
+        // USER_NOT_FOUND
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(null);
+
+        // WHEN, THEN
+        // Realizamos una petición GET a la barra de navegación y
+        // se debe devolver una página que contenga el botón de login
+        this.mockMvc.perform(get("/about"))
+                .andExpect(content().string(allOf(
+                        containsString("Login"),
+                        containsString("Registro")
+                )));
+    }
+
+    // test que compruebe, cuando se loggea un usuario, que en el navbar aparezca su nombre
+    @Test
+    public void getNavbarUsuarioLoggeado() throws Exception {
+        // GIVEN
+        // Creamos el objeto del usuario loggeado
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+
+        // Simulamos que el usuario está loggeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+
+        // Simulamos la búsqueda del usuario loggeado
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición GET a la página /about y comprobamos que aparece el nombre del usuario loggeado
+        this.mockMvc.perform(get("/about"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("Tareas"),    // Aseguramos que aparece el enlace de tareas
+                        containsString("Ana García") // Aseguramos que aparece el nombre del usuario
+                )));
+    }
+
 }

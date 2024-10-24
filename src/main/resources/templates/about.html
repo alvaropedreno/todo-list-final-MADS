@@ -4,12 +4,13 @@
 <head th:replace="fragments :: head (titulo='Acerca de')"></head>
 
 <body>
+<div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado != null ? usuarioLoggeado : null})"></div>
 <div class="container-fluid">
     <div class="container-fluid">
         <h1>ToDoList</h1>
         <ul>
             <li>Desarrollada por Mercedes Suarez Canga </li>
-            <li>Versión 1.0.1 (en desarrollo)</li>
+            <li>Versión 1.0.1</li>
             <li>Fecha de release: 01/10/2024</li>
         </ul>
     </div>
