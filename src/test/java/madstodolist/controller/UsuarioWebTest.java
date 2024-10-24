@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,6 +19,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,6 +42,10 @@ public class UsuarioWebTest {
     // las peticiones a los endpoint.
     @MockBean
     private UsuarioService usuarioService;
+    @Autowired
+    private HttpSession httpSession;
+    @Autowired @MockBean
+    private ManagerUserSession managerUserSession;
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
@@ -102,8 +109,9 @@ public class UsuarioWebTest {
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
 
+    // test que muestra el listado de usuarios registrados (/registrados) siendo el usuario loggeado administador
     @Test
-    public void listaUsuarios() throws Exception {
+    public void listaUsuariosAdmin() throws Exception {
         // GIVEN
         // Moqueamos el método usuarioService.allUsuarios para que devuelva
         // una lista de usuarios
@@ -111,13 +119,19 @@ public class UsuarioWebTest {
         anaGarcia.setNombre("Ana García");
         anaGarcia.setEmail("ana.garcia@gmail.com");
         anaGarcia.setId(1L);
+        anaGarcia.setAdmin(true);
 
         UsuarioData juanLopez = new UsuarioData();
         juanLopez.setNombre("Juan López");
         juanLopez.setEmail("juan.lopez@gmail.com");
         juanLopez.setId(2L);
 
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(anaGarcia.getId());
+        when(managerUserSession.isAdmin())
+                .thenReturn(true);
 
+        // queremos que en la pagina /registrados se pulse el boton "ver detalles" el cual nos lleve a la pagina /registrados/2
         when(usuarioService.allUsuarios())
                 .thenReturn(Arrays.asList(anaGarcia, juanLopez));
 
@@ -143,9 +157,15 @@ public class UsuarioWebTest {
         anaGarcia.setId(2L);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         anaGarcia.setFechaNacimiento(sdf.parse("2001-02-03"));
+        anaGarcia.setAdmin(true);
+
+        when(managerUserSession.usuarioLogeado())
+                .thenReturn(anaGarcia.getId());
+        when(managerUserSession.isAdmin())
+                .thenReturn(true);
 
         // queremos que en la pagina /registrados se pulse el boton "ver detalles" el cual nos lleve a la pagina /registrados/2
-        when(usuarioService.findById(2L))
+        when(usuarioService.findById(anaGarcia.getId()))
                 .thenReturn(anaGarcia);
 
         // WHEN, THEN
