@@ -1,5 +1,7 @@
 package madstodolist.controller;
 
+import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.UsuarioNoAdminException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
@@ -16,8 +18,18 @@ public class UsuarioController {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    ManagerUserSession managerUserSession;
+
+    private void comprobarUsuarioAdmin() {
+        if (!managerUserSession.isAdmin())
+            throw new UsuarioNoAdminException();
+    }
+
     @GetMapping("/registrados")
     public String listadoUsuarios(Model model) {
+
+        comprobarUsuarioAdmin();
 
         List<UsuarioData> usuarios = usuarioService.allUsuarios();
         model.addAttribute("usuarios", usuarios);
@@ -27,6 +39,9 @@ public class UsuarioController {
 
     @GetMapping("/registrados/{id}")
     public String detalleUsuario(@PathVariable Long id, Model model) {
+
+        comprobarUsuarioAdmin();
+
         UsuarioData usuario = usuarioService.findById(id);
         model.addAttribute("usuario", usuario);
         return "detalleUsuario";

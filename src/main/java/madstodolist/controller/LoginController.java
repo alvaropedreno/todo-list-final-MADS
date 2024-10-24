@@ -45,7 +45,7 @@ public class LoginController {
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
             UsuarioData usuario = usuarioService.findByEmail(loginData.geteMail());
 
-            managerUserSession.logearUsuario(usuario.getId());
+            managerUserSession.logearUsuario(usuario.getId(), usuario.getAdmin());
 
             if(usuario.getAdmin()) {
                 return "redirect:/registrados";
