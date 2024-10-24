@@ -30,9 +30,11 @@ public class UsuarioController {
     public String listadoUsuarios(Model model) {
 
         comprobarUsuarioAdmin();
+        Long usuarioID = managerUserSession.usuarioLogeado();
 
         List<UsuarioData> usuarios = usuarioService.allUsuarios();
         model.addAttribute("usuarios", usuarios);
+        model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
 
         return "listaUsuarios";
     }
@@ -41,9 +43,11 @@ public class UsuarioController {
     public String detalleUsuario(@PathVariable Long id, Model model) {
 
         comprobarUsuarioAdmin();
+        Long usuarioID = managerUserSession.usuarioLogeado();
 
         UsuarioData usuario = usuarioService.findById(id);
         model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
         return "detalleUsuario";
     }
 

@@ -24,11 +24,11 @@ public class HomeController {
         Long usuarioID = managerUserSession.usuarioLogeado();
 
         if (usuarioID == null){
-            model.addAttribute("usuario", null);
+            model.addAttribute("usuarioLoggeado", null);
         }
         else {
-            UsuarioData usuario = usuarioService.findById(usuarioID);
-            model.addAttribute("usuario", usuario);
+            UsuarioData usuarioLoggeado = usuarioService.findById(usuarioID);
+            model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         }
 
 
