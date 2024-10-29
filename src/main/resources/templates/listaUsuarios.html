@@ -9,7 +9,7 @@
 
   <div class="row mt-3">
     <div class="col">
-      <h2 th:text="'Listado de usuarios'"></h2>
+      <h2>Listado de usuarios</h2>
     </div>
   </div>
 
@@ -21,6 +21,7 @@
           <th>Id</th>
           <th>Correo electronico</th>
           <th>Acciones</th>
+          <th>Bloquear/desbloquear</th>
         </tr>
         </thead>
         <tbody>
@@ -28,13 +29,13 @@
           <td th:text="${usuario.id}"></td>
           <td th:text="${usuario.email}"></td>
           <td>
-            <a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}" style="margin-right: 5px;">ver detalles</a>
-            <form th:action="@{/toggleBloqueo/{id}(id=${usuario.id})}" method="post" style="display: inline;">
-              <button type="submit"
-                      th:text="${usuario.bloqueado ? 'Desbloquear' : 'Bloquear'}"
-                      class="btn btn-warning btn-xs">
-              </button>
-            </form>
+            <a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}"/>Ver detalles</a>
+          </td>
+          <td th:if="${!usuario.bloqueado}">
+            <a class="btn btn-danger btn-xs" th:href="@{/toggleBloqueo/{id}(id=${usuario.id})}"/>Bloquear</a>
+          </td>
+          <td th:if="${usuario.bloqueado}">
+            <a class="btn btn-success btn-xs" th:href="@{/toggleBloqueo/{id}(id=${usuario.id})}"/>Desbloquear</a>
           </td>
 
         </tr>

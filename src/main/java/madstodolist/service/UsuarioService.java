@@ -100,12 +100,13 @@ public class UsuarioService {
 
     // funcion que cambia el estado de bloqueado de un usuario
     @Transactional
-    public void toggleBloqueo(Long usuarioID){
+    public UsuarioData toggleBloqueo(Long usuarioID){
         Usuario usuario = usuarioRepository.findById(usuarioID).orElse(null);
         if (usuario == null) {
             throw new UsuarioServiceException("Usuario no encontrado");
         }
         usuario.setBloqueado(!usuario.getBloqueado());
-        usuarioRepository.save(usuario);
+        usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(usuario, UsuarioData.class);
     }
 }

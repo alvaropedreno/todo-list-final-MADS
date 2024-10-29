@@ -51,7 +51,7 @@ public class UsuarioController {
         return "detalleUsuario";
     }
 
-    @PostMapping("/toggleBloqueo/{id}")
+    @GetMapping("/toggleBloqueo/{id}")
     public String toggleBloque(@PathVariable Long id) {
         usuarioService.toggleBloqueo(id);
         return "redirect:/registrados";

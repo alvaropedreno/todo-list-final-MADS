@@ -181,6 +181,27 @@ public class UsuarioWebTest {
     }
 
     @Test
+    public void formularioApareceAdmin() throws Exception{
+        // GIVEN
+        // Moqueamos el método usuarioService.existeAdmin para que devuelva
+        // true
+        when(usuarioService.existeAdmin())
+                .thenReturn(false);
+
+        // WHEN, THEN
+        // Realizamos una petición GET al formulario de registro y
+        // se debe devolver una página que contenga el campo admin
+        this.mockMvc.perform(get("/registro"))
+                .andExpect(content().string(allOf(
+                        containsString("Correo electrónico"),
+                        containsString("Nombre"),
+                        containsString("Contraseña"),
+                        containsString("Fecha de nacimiento"),
+                        containsString("Administrador")
+                )));
+    }
+
+    @Test
     public void formularioNoApareceAdmin() throws Exception{
         // GIVEN
         // Moqueamos el método usuarioService.existeAdmin para que devuelva
