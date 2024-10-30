@@ -13,5 +13,7 @@ jobs:
       # Hacemos un checkout del código del repositorio
       - uses: actions/checkout@v1
       # Y lanzamos los tests
+      - name: Set executable permissions for mvnw
+        run: chmod +x ./mvnw
       - name: Launch tests with Maven
         run:  ./mvnw test
