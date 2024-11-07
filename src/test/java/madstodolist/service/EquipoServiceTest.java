@@ -139,4 +139,17 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), 1L))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void añadirEquipoSinNombreThrowsException() {
+        assertThatThrownBy(() -> equipoService.crearEquipo(null))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void añadirEquipoRepetidoThrowsException() {
+        equipoService.crearEquipo("Proyecto 1");
+        assertThatThrownBy(() -> equipoService.crearEquipo("Proyecto 1"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }

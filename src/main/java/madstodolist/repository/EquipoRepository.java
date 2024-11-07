@@ -9,4 +9,6 @@ public interface EquipoRepository extends CrudRepository<Equipo, Long> {
     public List<Equipo> findAll();
 
     List<Equipo> findAllByOrderByNombreAsc();
+
+    Equipo findByNombre(String nombre);
 }

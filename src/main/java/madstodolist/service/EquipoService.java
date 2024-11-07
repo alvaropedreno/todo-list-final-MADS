@@ -30,6 +30,8 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
+        if(nombre == null || nombre.isEmpty()) throw new EquipoServiceException();
+        if(equipoRepository.findByNombre(nombre) != null) throw new EquipoServiceException();
         Equipo equipo = new Equipo(nombre);
         equipo = equipoRepository.save(equipo);
         return modelMapper.map(equipo, EquipoData.class);
