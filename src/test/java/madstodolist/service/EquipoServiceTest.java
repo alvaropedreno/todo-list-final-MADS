@@ -10,6 +10,7 @@ import madstodolist.service.EquipoServiceException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -70,6 +71,30 @@ public class EquipoServiceTest {
         List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
         assertThat(usuarios).hasSize(1);
         assertThat(usuarios.get(0).getEmail()).isEqualTo("user@ua");
+    }
+
+    @Test
+    public void eliminarUsuarioDeEquipo() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        // WHEN
+        // Eliminamos el usuario del equipo
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+
+        // THEN
+        // El usuario ya no pertenece al equipo
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
+        assertThat(usuarios).isEmpty();
+        assertThat(equipos).isEmpty();
+
     }
 
     @Test
