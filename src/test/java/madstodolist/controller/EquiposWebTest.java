@@ -2,7 +2,9 @@ package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.EquipoData;
+import madstodolist.dto.UsuarioData;
 import madstodolist.service.EquipoService;
+import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +33,9 @@ public class EquiposWebTest {
     private EquipoService equipoService;
 
     @Autowired @MockBean
+    private UsuarioService usuarioService;
+
+    @Autowired @MockBean
     private ManagerUserSession managerUserSession;
 
     @Test
@@ -52,5 +57,29 @@ public class EquiposWebTest {
                 )));
     }
 
-    // boton en navbar
+    @Test
+    public void testMostrarOpcionEquipo() throws Exception {
+        // GIVEN
+        // Creamos el objeto del usuario loggeado
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+
+        // Simulamos que el usuario está loggeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+
+        // Simulamos la búsqueda del usuario loggeado
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición GET a la página /about y comprobamos que aparece el nombre del usuario loggeado
+        this.mockMvc.perform(get("/about"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("Tareas"),    // Aseguramos que aparece el enlace de tareas
+                        containsString("Equipos"),   // Aseguramos que aparece el enlace de equipos
+                        containsString("Ana García") // Aseguramos que aparece el nombre del usuario
+                )));
+    }
+
 }
