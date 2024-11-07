@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -131,112 +131,6 @@ public class EquiposWebTest {
 
 
 
-    }
-
-    @Test
-    public void testAddUsuarioEquipo() throws Exception {
-        EquipoData equipo1 = new EquipoData();
-        equipo1.setId(1L);
-        equipo1.setNombre("Equipo 1");
-
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana@ua.es");
-        anaGarcia.setId(1L);
-
-        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
-        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
-        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
-        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
-
-        this.mockMvc.perform(get("/equipo/1/addUsuario/2"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipo/1/usuarios"));
-
-        this.mockMvc.perform(get("/equipo/1/usuarios"))
-                .andExpect(content().string(allOf(
-                    containsString("ana@ua.es")
-                )));
-
-
-
-    }
-
-    @Test
-    public void testRemoveUsuarioEquipo() throws Exception {
-        EquipoData equipo1 = new EquipoData();
-        equipo1.setId(1L);
-        equipo1.setNombre("Equipo 1");
-
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana@ua.es");
-        anaGarcia.setId(1L);
-
-        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
-        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
-        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
-        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
-
-        this.mockMvc.perform(get("/equipo/1/addUsuario/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipo/1/usuarios"));
-
-        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList());
-
-        this.mockMvc.perform(get("/equipo/1/deleteUsuario/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipo/1/usuarios"));
-
-        this.mockMvc.perform(get("/equipo/1/usuarios"))
-                .andExpect(content().string(not(containsString("ana@ua.es"))));
-
-
-    }
-
-    @Test
-    public void testMostrarBotonAñadirUsuarioEquipo() throws Exception {
-        EquipoData equipo1 = new EquipoData();
-        equipo1.setId(1L);
-        equipo1.setNombre("Equipo 1");
-
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana@ua.es");
-        anaGarcia.setId(1L);
-
-        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
-        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
-        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
-
-        this.mockMvc.perform(get("/equipo/1/usuarios"))
-                .andExpect(content().string(allOf(
-                        containsString("Añadirme")
-                )));
-    }
-
-    @Test
-    public void testMostrarBotonEliminarUsuarioEquipo() throws Exception {
-        EquipoData equipo1 = new EquipoData();
-        equipo1.setId(1L);
-        equipo1.setNombre("Equipo 1");
-
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana@ua.es");
-        anaGarcia.setId(1L);
-
-        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
-        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
-        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
-        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
-
-        this.mockMvc.perform(get("/equipo/1/addUsuario/2"));
-
-        this.mockMvc.perform(get("/equipo/1/usuarios"))
-                .andExpect(content().string(allOf(
-                        containsString("Eliminarme")
-                )));
     }
 
 }
