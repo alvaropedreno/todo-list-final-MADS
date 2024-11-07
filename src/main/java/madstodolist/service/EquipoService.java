@@ -50,6 +50,9 @@ public class EquipoService {
         if (equipo == null) throw new EquipoServiceException();
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) throw new EquipoServiceException();
+
+        if(equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException();
+
         equipo.addUsuario(usuario);
     }
 
