@@ -38,6 +38,8 @@ public class EquiposWebTest {
     @Autowired @MockBean
     private ManagerUserSession managerUserSession;
 
+
+
     @Test
     public void testMostrarEquipos() throws Exception {
         EquipoData equipo1 = new EquipoData();
@@ -80,6 +82,55 @@ public class EquiposWebTest {
                         containsString("Equipos"),   // Aseguramos que aparece el enlace de equipos
                         containsString("Ana García") // Aseguramos que aparece el nombre del usuario
                 )));
+    }
+
+    @Test
+    public void testMostrarComponentesEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        List<UsuarioData> usuarios = Arrays.asList(anaGarcia);
+
+        when(equipoService.usuariosEquipo(1L)).thenReturn(usuarios);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(
+                    containsString("Ana García")
+                ));
+    }
+
+    @Test
+    public void testGetMiembrosEquipo() throws Exception {
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana@ua.es");
+        anaGarcia.setId(1L);
+
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(allOf(
+                    containsString("Equipo 1"),
+                    containsString("ana@ua.es")
+                )));
+
+
+
     }
 
 }

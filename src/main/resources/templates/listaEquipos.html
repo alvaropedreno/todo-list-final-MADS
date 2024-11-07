@@ -20,12 +20,16 @@
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="equipo: ${equipos}">
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-xs" th:href="@{/equipo/{id}/usuarios(id=${equipo.id})}"/>Ver miembros</a>
+                    </td>
                     </tr>
                 </tbody>
             </table>
