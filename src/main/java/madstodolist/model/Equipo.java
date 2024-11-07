@@ -4,9 +4,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+import java.util.Set;
+import java.util.HashSet;
+
 @Entity
 @Table(name = "equipos")
-
 public class Equipo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -15,6 +17,17 @@ public class Equipo implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+
+    // Declaramos el tipo de recuperación como LAZY.
+    // No haría falta porque es el tipo por defecto en una relación a muchos.
+    // Al recuperar un equipo NO SE RECUPERA AUTOMÁTICAMENTE la lista de usuarios. Sólo se recupera cuando se accede al
+    // atributo 'usuarios'; entonces se genera una query en la BD que devuelve todos los usuarios del equipo y rellena el atributo.
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "equipo_usuario",
+            joinColumns = { @JoinColumn(name = "fk_equipo") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
+    Set<Usuario> usuarios = new HashSet<>();
 
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
@@ -39,6 +52,18 @@ public class Equipo implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    public Set<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void addUsuario(Usuario usuario) {
+        // Hay que actualiar ambas colecciones, porque
+        // JPA/Hibernate no lo hace automáticamente
+        this.getUsuarios().add(usuario);
+        usuario.getEquipos().add(this);
+    }
+
 
     @Override
     public boolean equals(Object o) {
