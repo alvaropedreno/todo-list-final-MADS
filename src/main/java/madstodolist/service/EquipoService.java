@@ -30,6 +30,8 @@ public class EquipoService {
 
     @Transactional
     public EquipoData crearEquipo(String nombre) {
+        if(nombre == null || nombre.isEmpty()) throw new EquipoServiceException();
+        if(equipoRepository.findByNombre(nombre) != null) throw new EquipoServiceException();
         Equipo equipo = new Equipo(nombre);
         equipo = equipoRepository.save(equipo);
         return modelMapper.map(equipo, EquipoData.class);
@@ -43,12 +45,24 @@ public class EquipoService {
     }
 
     @Transactional
-    public void añadirUsuarioAEquipo(Long id, Long id1) {
-        Equipo equipo = equipoRepository.findById(id).orElse(null);
+    public void añadirUsuarioAEquipo(Long idEquipo, Long idUsuario) {
+        Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
         if (equipo == null) throw new EquipoServiceException();
-        Usuario usuario = usuarioRepository.findById(id1).orElse(null);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) throw new EquipoServiceException();
+
+        if(equipo.getUsuarios().contains(usuario)) throw new EquipoServiceException();
+
         equipo.addUsuario(usuario);
+    }
+
+    @Transactional
+    public void eliminarUsuarioDeEquipo(Long idEquipo, Long idUsuario) {
+        Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
+        if (equipo == null) throw new EquipoServiceException();
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) throw new EquipoServiceException();
+        equipo.removeUsuario(usuario);
     }
 
     @Transactional(readOnly = true)

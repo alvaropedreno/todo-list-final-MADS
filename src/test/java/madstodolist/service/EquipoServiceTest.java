@@ -1,6 +1,7 @@
 package madstodolist.service;
 
 import madstodolist.dto.UsuarioData;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import madstodolist.dto.EquipoData;
@@ -10,6 +11,7 @@ import madstodolist.service.EquipoServiceException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -73,6 +75,30 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void eliminarUsuarioDeEquipo() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        // WHEN
+        // Eliminamos el usuario del equipo
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+
+        // THEN
+        // El usuario ya no pertenece al equipo
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
+        assertThat(usuarios).isEmpty();
+        assertThat(equipos).isEmpty();
+
+    }
+
+    @Test
     public void recuperarEquiposDeUsuario() {
         // GIVEN
         // Un usuario y dos equipos en la base de datos
@@ -113,5 +139,42 @@ public class EquipoServiceTest {
         EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
         assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), 1L))
                 .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void añadirEquipoSinNombreThrowsException() {
+        assertThatThrownBy(() -> equipoService.crearEquipo(null))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void añadirEquipoRepetidoThrowsException() {
+        equipoService.crearEquipo("Proyecto 1");
+        assertThatThrownBy(() -> equipoService.crearEquipo("Proyecto 1"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void añadirUsuarioDuplicado() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        UsuarioData finalUsuario = usuario;
+        Assertions.assertThrows(EquipoServiceException.class, () -> {
+            equipoService.añadirUsuarioAEquipo(equipo.getId(), finalUsuario.getId());
+        });
+
+        // THEN
+        // El usuario pertenece al equipo
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        assertThat(usuarios).hasSize(1);
+        assertThat(usuarios.get(0).getEmail()).isEqualTo("user@ua");
     }
 }
