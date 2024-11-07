@@ -1,0 +1,136 @@
+package madstodolist.controller;
+
+import madstodolist.authentication.ManagerUserSession;
+import madstodolist.dto.EquipoData;
+import madstodolist.dto.UsuarioData;
+import madstodolist.service.EquipoService;
+import madstodolist.service.UsuarioService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.allOf;
+import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class EquiposWebTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired @MockBean
+    private EquipoService equipoService;
+
+    @Autowired @MockBean
+    private UsuarioService usuarioService;
+
+    @Autowired @MockBean
+    private ManagerUserSession managerUserSession;
+
+
+
+    @Test
+    public void testMostrarEquipos() throws Exception {
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+        EquipoData equipo2 = new EquipoData();
+        equipo2.setId(2L);
+        equipo2.setNombre("Equipo 2");
+
+        when(equipoService.findAllOrdenadoPorNombre()).thenReturn(Arrays.asList(equipo1, equipo2));
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(allOf(
+                    containsString("Equipo 1"),
+                    containsString("Equipo 2")
+                )));
+    }
+
+    @Test
+    public void testMostrarOpcionEquipo() throws Exception {
+        // GIVEN
+        // Creamos el objeto del usuario loggeado
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+
+        // Simulamos que el usuario está loggeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+
+        // Simulamos la búsqueda del usuario loggeado
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición GET a la página /about y comprobamos que aparece el nombre del usuario loggeado
+        this.mockMvc.perform(get("/about"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(allOf(
+                        containsString("Tareas"),    // Aseguramos que aparece el enlace de tareas
+                        containsString("Equipos"),   // Aseguramos que aparece el enlace de equipos
+                        containsString("Ana García") // Aseguramos que aparece el nombre del usuario
+                )));
+    }
+
+    @Test
+    public void testMostrarComponentesEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        List<UsuarioData> usuarios = Arrays.asList(anaGarcia);
+
+        when(equipoService.usuariosEquipo(1L)).thenReturn(usuarios);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(
+                    containsString("Ana García")
+                ));
+    }
+
+    @Test
+    public void testGetMiembrosEquipo() throws Exception {
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana@ua.es");
+        anaGarcia.setId(1L);
+
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(allOf(
+                    containsString("Equipo 1"),
+                    containsString("ana@ua.es")
+                )));
+
+
+
+    }
+
+}
