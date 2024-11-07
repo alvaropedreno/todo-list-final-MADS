@@ -194,4 +194,49 @@ public class EquiposWebTest {
 
     }
 
+    @Test
+    public void testMostrarBotonAñadirUsuarioEquipo() throws Exception {
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana@ua.es");
+        anaGarcia.setId(1L);
+
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(allOf(
+                        containsString("Añadirme")
+                )));
+    }
+
+    @Test
+    public void testMostrarBotonEliminarUsuarioEquipo() throws Exception {
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana@ua.es");
+        anaGarcia.setId(1L);
+
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(equipoService.usuariosEquipo(1L)).thenReturn(Arrays.asList(anaGarcia));
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipo/1/addUsuario/2"));
+
+        this.mockMvc.perform(get("/equipo/1/usuarios"))
+                .andExpect(content().string(allOf(
+                        containsString("Eliminarme")
+                )));
+    }
+
 }
