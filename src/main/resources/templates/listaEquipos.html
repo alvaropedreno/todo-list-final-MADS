@@ -28,11 +28,14 @@
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
                     <td>
-                        <a class="btn btn-primary btn-xs" th:href="@{/equipo/{id}/usuarios(id=${equipo.id})}"/>Ver miembros</a>
+                        <a class="btn btn-primary btn-xs" th:href="@{/equipos/{id}/usuarios(id=${equipo.id})}"/>Ver miembros</a>
                     </td>
                     </tr>
                 </tbody>
             </table>
+            <p>
+                <a class="btn btn-primary" th:href="@{/equipos/nuevo}"> Nuevo equipo</a>
+            </p>
         </div>
     </div>
     <div class="row mt-2">
