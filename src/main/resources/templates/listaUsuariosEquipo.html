@@ -20,22 +20,21 @@
         <tr>
           <th>Id</th>
           <th>Correo electronico</th>
+          <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="usuario: ${usuarios}">
           <td th:text="${usuario.id}"></td>
           <td th:text="${usuario.email}"></td>
+          <td>
+            <a class="btn btn-primary btn-xs" th:href="@{/registrados/{id}(id=${usuario.id})}"/>Ver detalles</a>
+          </td>
         </tr>
         </tbody>
       </table>
-      <p>
-        <a th:if="!${pertenece}" class="btn btn-success btn-xs" th:href="@{/equipo/{idEquipo}/addUsuario/{idUsuario}(idEquipo=${equipo.id}, idUsuario=${usuarioLoggeado.id})}">Añadirme</a>
-        <a th:if="${pertenece}" class="btn btn-danger btn-xs" th:href="@{/equipo/{idEquipo}/deleteUsuario/{idUsuario}(idEquipo=${equipo.id}, idUsuario=${usuarioLoggeado.id})}">Eliminarme</a>
-      </p>
     </div>
   </div>
-
 </div>
 
 

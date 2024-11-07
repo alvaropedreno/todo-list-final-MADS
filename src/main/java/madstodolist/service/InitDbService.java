@@ -1,9 +1,7 @@
 package madstodolist.service;
 
-import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
-import madstodolist.repository.EquipoRepository;
 import madstodolist.repository.TareaRepository;
 import madstodolist.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,6 @@ public class InitDbService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private TareaRepository tareaRepository;
-    @Autowired
-    private EquipoRepository equipoRepository;
 
     // Se ejecuta tras crear el contexto de la aplicación
     // para inicializar la base de datos
@@ -38,10 +34,6 @@ public class InitDbService {
 
         Tarea tarea2 = new Tarea(usuario, "Renovar DNI");
         tareaRepository.save(tarea2);
-
-        Equipo equipo1 = new Equipo("Equipo 1");
-        equipoRepository.save(equipo1);
-
     }
 
 }
