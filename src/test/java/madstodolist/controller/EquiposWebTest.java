@@ -18,8 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -231,6 +230,50 @@ public class EquiposWebTest {
                 .andExpect(content().string(
                     containsString("Equipo 2")
                 ));
+    }
+
+    @Test
+    public void testNoAdminNoEliminaEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(false);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+
+        this.mockMvc.perform(get("/equipos/1/editar"))
+                .andExpect(content().string(
+                        not(containsString("Eliminar"))
+                ));
+    }
+
+    @Test
+    public void testEliminarEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(true);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(managerUserSession.isAdmin()).thenReturn(true);
+
+        this.mockMvc.perform(delete("/equipos/1"));
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                        not(containsString("Equipo 1"))));
     }
 
 }

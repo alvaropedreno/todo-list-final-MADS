@@ -9,13 +9,11 @@ import madstodolist.service.EquipoService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -108,4 +106,21 @@ public class EquipoController {
         return "redirect:/equipos";
     }
 
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String borrarEquipo(@PathVariable(value="id") Long idEquipo, RedirectAttributes flash, HttpSession session) {
+        System.out.println("*************");
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+        //mostrar en consola el nombre del equipo
+        System.out.println("****" + equipo.getNombre());
+        comprobarUsuarioAdmin();
+        System.out.println("Equipo a eliminar: " + idEquipo);
+        equipoService.eliminarEquipo(idEquipo);
+        System.out.println("Equipo eliminado correctamente");
+
+        return "";
+    }
 }
