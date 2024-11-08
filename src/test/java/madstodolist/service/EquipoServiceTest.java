@@ -193,4 +193,12 @@ public class EquipoServiceTest {
         EquipoData equipoBD = equipoService.recuperarEquipo(equipo.getId());
         assertThat(equipoBD.getNombre()).isEqualTo("Proyecto 2");
     }
+
+    @Test
+    public void eliminarEquipo() {
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.eliminarEquipo(equipo.getId());
+        assertThatThrownBy(() -> equipoService.recuperarEquipo(equipo.getId()))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }

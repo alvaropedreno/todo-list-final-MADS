@@ -54,6 +54,13 @@ public class EquipoService {
     }
 
     @Transactional
+    public void eliminarEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException();
+        equipoRepository.delete(equipo);
+    }
+
+    @Transactional
     public void añadirUsuarioAEquipo(Long idEquipo, Long idUsuario) {
         Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
         if (equipo == null) throw new EquipoServiceException();
