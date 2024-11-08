@@ -16,9 +16,8 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,8 +38,6 @@ public class EquiposWebTest {
     @Autowired @MockBean
     private ManagerUserSession managerUserSession;
 
-
-
     @Test
     public void testMostrarEquipos() throws Exception {
         EquipoData equipo1 = new EquipoData();
@@ -50,8 +47,15 @@ public class EquiposWebTest {
         equipo2.setId(2L);
         equipo2.setNombre("Equipo 2");
 
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(false);
+
         when(equipoService.findAllOrdenadoPorNombre()).thenReturn(Arrays.asList(equipo1, equipo2));
         when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+        when(managerUserSession.isAdmin()).thenReturn(false);
 
         this.mockMvc.perform(get("/equipos"))
                 .andExpect(content().string(allOf(
@@ -175,6 +179,57 @@ public class EquiposWebTest {
         this.mockMvc.perform(get("/equipos"))
                 .andExpect(content().string(
                     containsString("Equipo 1")
+                ));
+    }
+
+    @Test
+    public void testNoAdminNoEditaEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(false);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+
+        this.mockMvc.perform(get("/equipos/1/editar"))
+                .andExpect(content().string(
+                    not(containsString("Editar"))
+                ));
+    }
+
+    @Test
+    public void testEditarNombreEquipo() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setAdmin(true);
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
+        when(managerUserSession.isAdmin()).thenReturn(true);
+
+        this.mockMvc.perform(post("/equipos/1/editar")
+                .param("nombre", "Equipo 2"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        equipo1.setNombre("Equipo 2");
+        when(equipoService.findAllOrdenadoPorNombre()).thenReturn(Arrays.asList(equipo1));
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                    containsString("Equipo 2")
                 ));
     }
 

@@ -1,6 +1,8 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.EquipoNotFoundException;
+import madstodolist.controller.exception.UsuarioNoAdminException;
 import madstodolist.dto.EquipoData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.EquipoService;
@@ -26,6 +28,11 @@ public class EquipoController {
     EquipoService equipoService;
     @Autowired
     private UsuarioService usuarioService;
+
+    private void comprobarUsuarioAdmin() {
+        if (!managerUserSession.isAdmin())
+            throw new UsuarioNoAdminException();
+    }
 
     @GetMapping("/equipos")
     public String equipos(Model model) {
@@ -67,6 +74,38 @@ public class EquipoController {
         model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
 
         return "listaUsuariosEquipo";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model) {
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+
+        comprobarUsuarioAdmin();
+        Long usuarioID = managerUserSession.usuarioLogeado();
+
+        model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
+        model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
+        equipoData.setNombre(equipo.getNombre());
+        return "formEditarEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash) {
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+
+        equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+
+        comprobarUsuarioAdmin();
+        flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+        return "redirect:/equipos";
     }
 
 }
