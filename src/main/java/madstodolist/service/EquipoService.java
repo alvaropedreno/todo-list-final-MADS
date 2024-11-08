@@ -45,6 +45,15 @@ public class EquipoService {
     }
 
     @Transactional
+    public void editarEquipo(Long id, String nombre) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException();
+        if(nombre == null || nombre.isEmpty()) throw new EquipoServiceException();
+        if(equipoRepository.findByNombre(nombre) != null) throw new EquipoServiceException();
+        equipo.setNombre(nombre);
+    }
+
+    @Transactional
     public void añadirUsuarioAEquipo(Long idEquipo, Long idUsuario) {
         Equipo equipo = equipoRepository.findById(idEquipo).orElse(null);
         if (equipo == null) throw new EquipoServiceException();
