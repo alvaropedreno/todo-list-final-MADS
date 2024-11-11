@@ -29,6 +29,9 @@
                     <td th:text="${equipo.nombre}"></td>
                     <td>
                         <a class="btn btn-primary btn-xs" th:href="@{/equipos/{id}/usuarios(id=${equipo.id})}"/>Ver miembros</a>
+                        <a class="btn btn-warning btn-xs" th:if="${usuarioLoggeado.admin}" th:href="@{/equipos/{id}/editar(id=${equipo.id})}" th:text="Editar"/></a>
+                        <button class="btn btn-danger btn-xs" th:if="${usuarioLoggeado.admin}" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'" th:text="Eliminar"></button>
                     </td>
                     </tr>
                 </tbody>

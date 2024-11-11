@@ -1,19 +1,19 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.EquipoNotFoundException;
+import madstodolist.controller.exception.UsuarioNoAdminException;
 import madstodolist.dto.EquipoData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.EquipoService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -26,6 +26,11 @@ public class EquipoController {
     EquipoService equipoService;
     @Autowired
     private UsuarioService usuarioService;
+
+    private void comprobarUsuarioAdmin() {
+        if (!managerUserSession.isAdmin())
+            throw new UsuarioNoAdminException();
+    }
 
     @GetMapping("/equipos")
     public String equipos(Model model) {
@@ -69,4 +74,53 @@ public class EquipoController {
         return "listaUsuariosEquipo";
     }
 
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model) {
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+
+        comprobarUsuarioAdmin();
+        Long usuarioID = managerUserSession.usuarioLogeado();
+
+        model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
+        model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
+        equipoData.setNombre(equipo.getNombre());
+        return "formEditarEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash) {
+
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+
+        equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+
+        comprobarUsuarioAdmin();
+        flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+        return "redirect:/equipos";
+    }
+
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String borrarEquipo(@PathVariable(value="id") Long idEquipo, RedirectAttributes flash, HttpSession session) {
+        System.out.println("*************");
+        EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+        if (equipo == null) {
+            throw new EquipoNotFoundException();
+        }
+        //mostrar en consola el nombre del equipo
+        System.out.println("****" + equipo.getNombre());
+        comprobarUsuarioAdmin();
+        System.out.println("Equipo a eliminar: " + idEquipo);
+        equipoService.eliminarEquipo(idEquipo);
+        System.out.println("Equipo eliminado correctamente");
+
+        return "";
+    }
 }
