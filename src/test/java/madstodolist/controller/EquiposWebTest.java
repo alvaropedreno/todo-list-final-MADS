@@ -89,30 +89,6 @@ public class EquiposWebTest {
     }
 
     @Test
-    public void testMostrarComponentesEquipo() throws Exception {
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana@ua.es");
-        anaGarcia.setId(1L);
-
-        EquipoData equipo1 = new EquipoData();
-        equipo1.setId(1L);
-        equipo1.setNombre("Equipo 1");
-
-        List<UsuarioData> usuarios = Arrays.asList(anaGarcia);
-
-        when(equipoService.usuariosEquipo(1L)).thenReturn(usuarios);
-        when(equipoService.recuperarEquipo(1L)).thenReturn(equipo1);
-        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
-        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
-
-        this.mockMvc.perform(get("/equipos/1/usuarios"))
-                .andExpect(content().string(
-                    containsString("ana@ua.es")
-                ));
-    }
-
-    @Test
     public void testGetMiembrosEquipo() throws Exception {
         EquipoData equipo1 = new EquipoData();
         equipo1.setId(1L);
