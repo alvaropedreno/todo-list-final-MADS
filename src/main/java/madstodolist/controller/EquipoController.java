@@ -70,8 +70,25 @@ public class EquipoController {
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
         model.addAttribute("equipo", equipoService.recuperarEquipo(idEquipo));
+        model.addAttribute("pertenece", usuarios.contains(usuarioService.findById(usuarioID)));
 
         return "listaUsuariosEquipo";
+    }
+
+    @GetMapping("/equipos/{idEquipo}/addUsuario/{idUsuario}")
+    public String addUsuarioEquipo(@PathVariable(value="idEquipo") Long idEquipo, @PathVariable(value="idUsuario") Long idUsuario, Model model) {
+
+        Long idUsuarioLoggeado = managerUserSession.usuarioLogeado();
+        equipoService.añadirUsuarioAEquipo(idEquipo, idUsuario);
+        return "redirect:/equipos/" + idEquipo + "/usuarios";
+    }
+
+    @GetMapping("/equipos/{idEquipo}/deleteUsuario/{idUsuario}")
+    public String deleteUsuarioEquipo(@PathVariable(value="idEquipo") Long idEquipo, @PathVariable(value="idUsuario") Long idUsuario, Model model) {
+
+        Long idUsuarioLoggeado = managerUserSession.usuarioLogeado();
+        equipoService.eliminarUsuarioDeEquipo(idEquipo, idUsuario);
+        return "redirect:/equipos/" + idEquipo + "/usuarios";
     }
 
     @GetMapping("/equipos/{id}/editar")

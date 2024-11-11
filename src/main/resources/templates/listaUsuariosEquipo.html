@@ -33,6 +33,10 @@
         </tr>
         </tbody>
       </table>
+      <p>
+        <a th:if="!${pertenece}" class="btn btn-success btn-xs" th:href="@{/equipo/{idEquipo}/addUsuario/{idUsuario}(idEquipo=${equipo.id}, idUsuario=${usuarioLoggeado.id})}">Añadirme</a>
+        <a th:if="${pertenece}" class="btn btn-danger btn-xs" th:href="@{/equipo/{idEquipo}/deleteUsuario/{idUsuario}(idEquipo=${equipo.id}, idUsuario=${usuarioLoggeado.id})}">Eliminarme</a>
+      </p>
     </div>
   </div>
 </div>
