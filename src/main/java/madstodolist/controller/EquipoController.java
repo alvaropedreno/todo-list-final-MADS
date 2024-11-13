@@ -57,7 +57,14 @@ public class EquipoController {
 
     @PostMapping("/equipos/nuevo")
     public String nuevoEquipo(@ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash){
-        equipoService.crearEquipo(equipoData.getNombre());
+        try{
+            equipoService.crearEquipo(equipoData.getNombre());
+        }
+        catch (Exception e){
+            flash.addFlashAttribute("mensaje", "Nombre no disponible");
+            return "redirect:/equipos/nuevo";
+        }
+
         flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
         return "redirect:/equipos";
     }
@@ -116,9 +123,16 @@ public class EquipoController {
             throw new EquipoNotFoundException();
         }
 
-        equipoService.editarEquipo(idEquipo, equipoData.getNombre());
-
         comprobarUsuarioAdmin();
+
+        try{
+            equipoService.editarEquipo(idEquipo, equipoData.getNombre());
+        }
+        catch (Exception e){
+            flash.addFlashAttribute("mensaje", "Nombre no disponible");
+            return "redirect:/equipos/" + idEquipo + "/editar";
+        }
+
         flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
         return "redirect:/equipos";
     }

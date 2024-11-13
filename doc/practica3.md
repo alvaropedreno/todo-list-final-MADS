@@ -38,7 +38,7 @@ Se muestra una lista con todos los equipos y aparece una opcion para ver los usu
 
 ### /equipos/nuevo
 
-Muestra un formulario para introducir el nombre de un nuevo equipo y lo crea.
+Muestra un formulario para introducir el nombre de un nuevo equipo y lo crea. En caso de que el nombre no se introduzca o ya exista, se lanzará una excepción.
 
 #### Clases y métodos
 
@@ -116,7 +116,8 @@ Se elimina un usuario de un equipo.
 
 ### /equipos/{id}/editar
 
-Se edita un equipo. Esta funcionalidad solo está disponible para los administradores.
+Se edita un equipo. Esta funcionalidad solo está disponible para los administradores.  
+En caso de que el nombre no se introduzca o ya exista, se lanzará una excepción.
 
 #### Clases y métodos
 
