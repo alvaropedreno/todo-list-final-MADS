@@ -4,16 +4,16 @@ La práctica incluye todas las funcionalidades, tanto obligatorias como opcional
 
 ## 1. Pantalla de la base de datos PostgreSQL
 
-* Tablas
-![Tablas de la base de datos.](/images/p3-tables.png)
-* Tabla Equipo-Usuario
-![Tabla Equipo-Usuario](/images/p3-equipo_usuario.png)
-* Tabla Equipos
-![Tabla Equipos](/images/p3-equipos.png)
-* Tabla Tareas
-![Tabla Tareas](/images/p3-tareas.png)
-* Tabla Usuarios
-![Tabla Usuarios](/images/p3-usuarios.png)
+* Tablas  
+![Tablas de la base de datos.](images/p3-tables.png)
+* Tabla Equipo-Usuario  
+![Tabla Equipo-Usuario](images/p3-equipo_usuario.png)
+* Tabla Equipos  
+![Tabla Equipos](images/p3-equipos.png)
+* Tabla Tareas  
+![Tabla Tareas](images/p3-tareas.png)
+* Tabla Usuarios  
+![Tabla Usuarios](images/p3-usuarios.png)
 
 ## 2. Endpoints definidos para las acciones
 
