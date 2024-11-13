@@ -59,7 +59,8 @@ Muestra un formulario para introducir el nombre de un nuevo equipo y lo crea. En
 
 ### /equipos/{id}/usuarios
 
-Se muestran los usuarios del equipo seleccionado, pudiendo ver los detalles de los mismos. Se podra gestionar la pertenencia al equipo con um boton para añadirse/eliminarse del mismo.
+Se muestran los usuarios del equipo seleccionado. Se podra gestionar la pertenencia al equipo con um boton para añadirse/eliminarse del mismo.  
+Además, un usuario administrador podrá ver los detalles de los mismos.
 
 #### Clases y métodos
 
