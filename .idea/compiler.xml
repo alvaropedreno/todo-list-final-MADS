@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mads-todolist" />
+        <module name="mads-todolist-mercedes" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="mads-todolist" options="-parameters" />
+      <module name="mads-todolist-mercedes" options="-parameters" />
     </option>
   </component>
 </project>
