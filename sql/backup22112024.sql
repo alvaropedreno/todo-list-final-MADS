@@ -16,6 +16,23 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE ONLY public.equipo_usuario DROP CONSTRAINT fksabsvjgvfuen6hmyg7gn7oq4v;
+ALTER TABLE ONLY public.equipo_usuario DROP CONSTRAINT fkk4y9gec15ccnirp3r7w29o66p;
+ALTER TABLE ONLY public.tareas DROP CONSTRAINT fkdmoaxl7yv4q6vkc9h32wvbddr;
+ALTER TABLE ONLY public.usuarios DROP CONSTRAINT usuarios_pkey;
+ALTER TABLE ONLY public.tareas DROP CONSTRAINT tareas_pkey;
+ALTER TABLE ONLY public.equipos DROP CONSTRAINT equipos_pkey;
+ALTER TABLE ONLY public.equipo_usuario DROP CONSTRAINT equipo_usuario_pkey;
+ALTER TABLE public.usuarios ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.tareas ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.equipos ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE public.usuarios_id_seq;
+DROP TABLE public.usuarios;
+DROP SEQUENCE public.tareas_id_seq;
+DROP TABLE public.tareas;
+DROP SEQUENCE public.equipos_id_seq;
+DROP TABLE public.equipos;
+DROP TABLE public.equipo_usuario;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -156,6 +173,65 @@ ALTER TABLE ONLY public.tareas ALTER COLUMN id SET DEFAULT nextval('public.tarea
 --
 
 ALTER TABLE ONLY public.usuarios ALTER COLUMN id SET DEFAULT nextval('public.usuarios_id_seq'::regclass);
+
+
+--
+-- Data for Name: equipo_usuario; Type: TABLE DATA; Schema: public; Owner: mads
+--
+
+COPY public.equipo_usuario (fk_equipo, fk_usuario) FROM stdin;
+1	2
+\.
+
+
+--
+-- Data for Name: equipos; Type: TABLE DATA; Schema: public; Owner: mads
+--
+
+COPY public.equipos (id, nombre) FROM stdin;
+1	Equipo 1
+\.
+
+
+--
+-- Data for Name: tareas; Type: TABLE DATA; Schema: public; Owner: mads
+--
+
+COPY public.tareas (id, titulo, usuario_id) FROM stdin;
+1	Tarea 1	1
+2	tarea 1	2
+\.
+
+
+--
+-- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: mads
+--
+
+COPY public.usuarios (id, admin, bloqueado, email, fecha_nacimiento, nombre, password) FROM stdin;
+1	f	f	user@ua.es	2001-01-01	user	user
+2	t	f	admin@ua.es	2001-02-03	admin	admin
+\.
+
+
+--
+-- Name: equipos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mads
+--
+
+SELECT pg_catalog.setval('public.equipos_id_seq', 1, true);
+
+
+--
+-- Name: tareas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mads
+--
+
+SELECT pg_catalog.setval('public.tareas_id_seq', 2, true);
+
+
+--
+-- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mads
+--
+
+SELECT pg_catalog.setval('public.usuarios_id_seq', 2, true);
 
 
 --
