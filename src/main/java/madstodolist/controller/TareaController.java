@@ -51,10 +51,8 @@ public class TareaController {
     public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData,
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
-
-        comprobarUsuarioLogeado(idUsuario);
-
-        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
+        
+        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo(), tareaData.getDescripcion());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
      }
