@@ -15,6 +15,10 @@
             <label for="titulo">Título de la tarea:</label>
             <input class="form-control" id="titulo" name="titulo" required th:field="*{titulo}" type="text"/>
         </div>
+        <div>
+            <label for="descripcion">Descripción:</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" th:field="*{descripcion}"></textarea>
+        </div>
         <button class="btn btn-primary" type="submit">Crear tarea</button>
         <a class="btn btn-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Cancelar</a>
         </div>
