@@ -17,7 +17,7 @@
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción de la tarea:</label>
-                <input class="form-control" id="descripcion" name="descripcion" required th:field="*{descripcion}" type="text"/>
+                <textarea class="form-control" id="descripcion" name="descripcion" th:field="*{descripcion}" rows="3"></textarea>
             </div>
         <button class="btn btn-primary" type="submit">Modificar tarea</button>
         <a class="btn btn-link" th:href="@{/usuarios/{id}/tareas(id=${tarea.usuarioId})}">Cancelar</a>
