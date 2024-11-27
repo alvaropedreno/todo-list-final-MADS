@@ -7,7 +7,7 @@ Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docent
 
 https://trello.com/b/NgfNsLTa/todolist-mads
 
-## Enlace Docker
+## Enlace Dock
 
 https://hub.docker.com/repository/docker/mersuarezc/mads-todolist/general
 
