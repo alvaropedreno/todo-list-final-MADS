@@ -42,6 +42,18 @@ public class TareaService {
         return modelMapper.map(tarea, TareaData.class);
     }
 
+    @Transactional
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String descripcion) {
+        logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
+        }
+        Tarea tarea = new Tarea(usuario, tituloTarea);
+        tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
     @Transactional(readOnly = true)
     public List<TareaData> allTareasUsuario(Long idUsuario) {
         logger.debug("Devolviendo todas las tareas del usuario " + idUsuario);
