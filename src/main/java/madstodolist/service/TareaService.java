@@ -49,7 +49,7 @@ public class TareaService {
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
-        Tarea tarea = new Tarea(usuario, tituloTarea);
+        Tarea tarea = new Tarea(usuario, tituloTarea, descripcion);
         tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
