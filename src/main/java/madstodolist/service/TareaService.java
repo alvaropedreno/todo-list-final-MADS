@@ -79,13 +79,25 @@ public class TareaService {
     }
 
     @Transactional
-    public TareaData modificaTarea(Long idTarea, String nuevoTitulo) {
+    public TareaData modificaTituloTarea(Long idTarea, String nuevoTitulo) {
         logger.debug("Modificando tarea " + idTarea + " - " + nuevoTitulo);
         Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
         if (tarea == null) {
             throw new TareaServiceException("No existe tarea con id " + idTarea);
         }
         tarea.setTitulo(nuevoTitulo);
+        tarea = tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
+    @Transactional
+    public TareaData modificarDescripcionTarea(Long idTarea, String nuevaDescripcion) {
+        logger.debug("Modificando tarea " + idTarea + " - " + nuevaDescripcion);
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.setDescripcion(nuevaDescripcion);
         tarea = tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
