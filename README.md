@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/cadf85ed-fd22-447f-90e3-228465fc791e)[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/n6fMhf_d)
 # Aplicación inicial ToDoList
 
 Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wlengua=es&wcodasi=34037&scaca=2024-25) usando Spring Boot y plantillas Thymeleaf.
