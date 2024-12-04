@@ -3,6 +3,7 @@ package madstodolist.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +20,8 @@ public class Tarea implements Serializable {
 
     private String descripcion;
 
+
+
     @NotNull
     // Relación muchos-a-uno entre tareas y usuario
     @ManyToOne
@@ -26,6 +29,13 @@ public class Tarea implements Serializable {
     // el ID del usuario con el que está asociado una tarea
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "tarea_padre_id")
+    private Tarea tareaPadre;
+
+    @OneToMany(mappedBy = "tareaPadre", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tarea> subtareas;
 
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
@@ -80,6 +90,32 @@ public class Tarea implements Serializable {
             // Añade la tarea a la lista de tareas del usuario
             usuario.addTarea(this);
         }
+    }
+
+    public List<Tarea> getSubtareas() {
+        return subtareas;
+    }
+
+    public void setSubtareas(List<Tarea> subtareas) {
+        this.subtareas = subtareas;
+    }
+
+    public void addSubtarea(Tarea subtarea) {
+        subtareas.add(subtarea);
+        subtarea.setTareaPadre(this);
+    }
+
+    public void removeSubtarea(Tarea subtarea) {
+        subtareas.remove(subtarea);
+        subtarea.setTareaPadre(null);
+    }
+
+    public void setTareaPadre(Tarea tareaPadre) {
+        this.tareaPadre = tareaPadre;
+    }
+
+    public Tarea getTareaPadre() {
+        return tareaPadre;
     }
 
     @Override
