@@ -3,6 +3,7 @@ package madstodolist.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class Tarea implements Serializable {
     private Tarea tareaPadre;
 
     @OneToMany(mappedBy = "tareaPadre", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tarea> subtareas;
+    private List<Tarea> subtareas = new ArrayList<>(); // Initialize the list
 
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.

@@ -1,6 +1,11 @@
 package madstodolist.dto;
 
+import madstodolist.model.Tarea;
+
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 // Data Transfer Object para la clase Tarea
@@ -12,6 +17,8 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
     private String descripcion;
+    private Tarea tareaPadre;
+    private List<Tarea> subtareas;
 
     // Getters y setters
 
@@ -45,6 +52,22 @@ public class TareaData implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Tarea getTareaPadre() {
+        return tareaPadre;
+    }
+
+    public void setTareaPadre(Tarea tareaPadre) {
+        this.tareaPadre = tareaPadre;
+    }
+
+    public List<Tarea> getSubtareas() {
+        return subtareas;
+    }
+
+    public void setSubtareas(List<Tarea> subtareas) {
+        this.subtareas = subtareas;
     }
 
     // Sobreescribimos equals y hashCode para que dos tareas sean iguales

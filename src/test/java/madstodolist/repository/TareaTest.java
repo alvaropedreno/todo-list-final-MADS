@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -246,4 +247,72 @@ public class TareaTest {
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
     }
 
+    @Test
+    @Transactional
+    public void testGuardarSubtarea() {
+        // GIVEN
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
+        Tarea tareaPadre = new Tarea(usuario, "Tarea principal");
+        tareaRepository.save(tareaPadre);
+
+        Tarea subtarea = new Tarea(usuario, "Subtarea 1");
+        tareaPadre.addSubtarea(subtarea);
+        tareaRepository.save(subtarea);
+
+        // WHEN
+        Tarea tareaPadreBD = tareaRepository.findById(tareaPadre.getId()).orElse(null);
+
+        // THEN
+        assertThat(tareaPadreBD.getSubtareas()).contains(subtarea);
+    }
+
+    @Test
+    @Transactional
+    public void testEliminarSubtarea() {
+        // GIVEN
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
+        Tarea tareaPadre = new Tarea(usuario, "Tarea principal");
+        tareaRepository.save(tareaPadre);
+
+        Tarea subtarea = new Tarea(usuario, "Subtarea 1");
+        tareaPadre.addSubtarea(subtarea);
+        tareaRepository.save(subtarea);
+
+        // WHEN
+        tareaPadre.removeSubtarea(subtarea);
+        tareaRepository.save(tareaPadre);
+
+        // THEN
+        Tarea tareaPadreBD = tareaRepository.findById(tareaPadre.getId()).orElse(null);
+        assertThat(tareaPadreBD.getSubtareas()).doesNotContain(subtarea);
+    }
+
+    @Test
+    @Transactional
+    public void testBuscarSubtareasPorTareaPadre() {
+        // GIVEN
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
+        Tarea tareaPadre = new Tarea(usuario, "Tarea principal");
+        tareaRepository.save(tareaPadre);
+
+        Tarea subtarea1 = new Tarea(usuario, "Subtarea 1");
+        Tarea subtarea2 = new Tarea(usuario, "Subtarea 2");
+        tareaPadre.addSubtarea(subtarea1);
+        tareaPadre.addSubtarea(subtarea2);
+        tareaRepository.save(subtarea1);
+        tareaRepository.save(subtarea2);
+
+        // WHEN
+        Tarea tareaPadreBD = tareaRepository.findById(tareaPadre.getId()).orElse(null);
+        List<Tarea> subtareas = tareaPadreBD.getSubtareas();
+
+        // THEN
+        assertThat(subtareas).contains(subtarea1, subtarea2);
+    }
 }
