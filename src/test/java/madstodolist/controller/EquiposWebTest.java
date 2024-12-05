@@ -358,4 +358,31 @@ public class EquiposWebTest {
                         not(containsString("Equipo 1"))));
     }
 
+    @Test
+    public void testGetEquiposPropios() throws Exception{
+
+        EquipoData equipo1 = new EquipoData();
+        equipo1.setId(1L);
+        equipo1.setNombre("Equipo 1");
+
+        EquipoData equipo2 = new EquipoData();
+        equipo2.setId(2L);
+        equipo2.setNombre("Equipo 2");
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana@ua.es");
+
+        when(equipoService.equiposUsuario(1L)).thenReturn(Arrays.asList(equipo1, equipo2));
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/equipos?show=mine"))
+                .andExpect(content().string(allOf(
+                        containsString("Equipo 1"),
+                        containsString("Equipo 2")
+                )));
+
+    }
+
 }
