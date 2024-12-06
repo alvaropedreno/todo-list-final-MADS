@@ -250,6 +250,7 @@ public class TareaTest {
 
 
     @Test
+    @Transactional
     public void testSetAndGetDeadline() {
         // GIVEN
         Usuario usuario = new Usuario("user@ua");
@@ -265,6 +266,7 @@ public class TareaTest {
 
 
     @Test
+    @Transactional
     public void testSetAndGetDeadlineData() {
         // GIVEN
         TareaData tareaData = new TareaData();
