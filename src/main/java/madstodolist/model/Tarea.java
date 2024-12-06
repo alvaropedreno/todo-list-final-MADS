@@ -27,6 +27,17 @@ public class Tarea implements Serializable {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+
+    private String prioridad; // Valores: "Alta", "Media", "Baja"
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
     public Tarea() {}
@@ -37,7 +48,8 @@ public class Tarea implements Serializable {
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
-    public Tarea(Usuario usuario, String titulo, String descripcion) {
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad) {
+        this.prioridad = prioridad;
         this.titulo = titulo;
         this.descripcion = descripcion;
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario

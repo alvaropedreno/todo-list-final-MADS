@@ -43,13 +43,13 @@ public class TareaService {
     }
 
     @Transactional
-    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String descripcion) {
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String descripcion, String prioridad) {
         logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
-        Tarea tarea = new Tarea(usuario, tituloTarea, descripcion);
+        Tarea tarea = new Tarea(usuario, tituloTarea, descripcion, prioridad);
         tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
@@ -101,6 +101,19 @@ public class TareaService {
         tarea = tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
+
+    @Transactional
+    public TareaData modificaPrioridadTarea(Long idTarea, String nuevaPrioridad) {
+        logger.debug("Modificando prioridad de la tarea " + idTarea);
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.setPrioridad(nuevaPrioridad);
+        tarea = tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
 
     @Transactional
     public void borraTarea(Long idTarea) {
