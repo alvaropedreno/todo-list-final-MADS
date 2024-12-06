@@ -265,5 +265,4 @@ public class TareaTest {
         assertThat(tareaBD).isNotNull();
         assertThat(tareaBD.getPrioridad()).isEqualTo("Alta");
     }
-
 }

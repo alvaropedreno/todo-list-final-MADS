@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalles usuario')"></head>
+
+<body>
+<div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado != null ? usuarioLoggeado : null})"></div>
+<div class="container-fluid">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2 th:text="'Datos del usuario ' + ${usuario.nombre}"> Datos del usuario</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th>ID:</th>
+                        <td th:text="${usuario.id}">1</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre:</th>
+                        <td th:text="${usuario.nombre}">Juan Pérez</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td th:text="${usuario.email}">juan.perez@example.com</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Nacimiento:</th>
+                        <td th:text="${usuario.fechaNacimiento}">1990-05-12</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
