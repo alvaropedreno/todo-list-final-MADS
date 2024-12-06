@@ -5,6 +5,7 @@ import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Tarea;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -134,14 +136,21 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuarioId());
 
+        List<Tarea> subtareas = tareaService.getSubtareas(idTarea);
+        if (subtareas == null) {
+            subtareas = new ArrayList<>(); // Initialize the list if it is null
+        }
+
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
         UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
 
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("usuario", usuarioLoggeado);
         model.addAttribute("tarea", tarea);
+        model.addAttribute("subtareas", subtareas);
         model.addAttribute("autor", autor.getNombre());
         return "detallesTarea";
     }
+
 }
 

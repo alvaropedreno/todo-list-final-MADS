@@ -121,4 +121,13 @@ public class TareaService {
         }
         return usuario.getTareas().contains(tarea);
     }
+
+    @Transactional
+    public List<Tarea> getSubtareas(Long idTarea) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        return tarea.getSubtareas();
+    }
 }
