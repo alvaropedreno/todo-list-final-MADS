@@ -1,5 +1,8 @@
 package madstodolist.dto;
 
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,6 +16,8 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
     private String descripcion;
+
+    @Nullable
     private LocalDateTime deadline;
 
     // Getters y setters

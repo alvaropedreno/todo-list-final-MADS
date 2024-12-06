@@ -1,7 +1,10 @@
 package madstodolist.model;
 
+import com.sun.istack.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,6 +23,7 @@ public class Tarea implements Serializable {
 
     private String descripcion;
 
+    @Nullable
     private LocalDateTime deadline;
 
     @NotNull
@@ -43,6 +47,13 @@ public class Tarea implements Serializable {
     public Tarea(Usuario usuario, String titulo, String descripcion) {
         this.titulo = titulo;
         this.descripcion = descripcion;
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+    }
+
+    public Tarea(Usuario usuario, String titulo, String descripcion, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
