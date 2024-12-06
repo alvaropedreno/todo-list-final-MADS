@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,6 +51,30 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
         Tarea tarea = new Tarea(usuario, tituloTarea, descripcion, prioridad);
+        tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
+    @Transactional
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String descripcion, LocalDateTime deadline) {
+        logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
+        }
+        Tarea tarea = new Tarea(usuario, tituloTarea, descripcion, deadline);
+        tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
+    @Transactional
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String descripcion, String prioridad, LocalDateTime deadline) {
+        logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
+        }
+        Tarea tarea = new Tarea(usuario, tituloTarea, descripcion, prioridad, deadline);
         tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
