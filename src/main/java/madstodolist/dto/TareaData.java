@@ -61,15 +61,13 @@ public class TareaData implements Serializable {
 
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
+    }
+    
     public String getPrioridad() {
         return prioridad;
     }
 
     public void setPrioridad(String prioridad) {
-        this.prioridad = prioridad;
-    }
-
-    public void getPrioridad(String prioridad) {
         this.prioridad = prioridad;
     }
 

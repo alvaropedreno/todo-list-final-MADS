@@ -69,6 +69,14 @@ public class Tarea implements Serializable {
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
+        this.prioridad = prioridad;
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+    }
+    
     // Getters y setters básicos
 
     public Long getId() {
