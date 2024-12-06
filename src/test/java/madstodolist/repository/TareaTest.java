@@ -248,6 +248,25 @@ public class TareaTest {
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
     }
 
+    @Test
+    @Transactional
+    public void guardarTareaConPrioridadEnBaseDatos() {
+        // GIVEN
+        // Un usuario en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // Creamos una nueva tarea con prioridad Alta
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS", "Resolver ejercicios", "Alta");
+        tareaRepository.save(tarea);
+
+        // THEN
+        // Verificamos que la tarea se guarda correctamente con su prioridad
+        Tarea tareaBD = tareaRepository.findById(tarea.getId()).orElse(null);
+        assertThat(tareaBD).isNotNull();
+        assertThat(tareaBD.getPrioridad()).isEqualTo("Alta");
+    }
 
     @Test
     @Transactional

@@ -66,7 +66,8 @@ public class TareaController {
             logger.info("No deadline provided; setting it to null.");
         }
 
-        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo(), tareaData.getDescripcion(), tareaData.getDeadline());
+        
+        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo(), tareaData.getDescripcion(), tareaData.getPrioridad(), tareaData.getDeadline());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
     }
@@ -102,6 +103,7 @@ public class TareaController {
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
         tareaData.setDescripcion(tarea.getDescripcion());
+        tareaData.setPrioridad(tarea.getPrioridad());
         return "formEditarTarea";
     }
 
@@ -119,6 +121,7 @@ public class TareaController {
 
         tareaService.modificaTituloTarea(idTarea, tareaData.getTitulo());
         tareaService.modificarDescripcionTarea(idTarea, tareaData.getDescripcion());
+        tareaService.modificaPrioridadTarea(idTarea, tareaData.getPrioridad());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
         return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }

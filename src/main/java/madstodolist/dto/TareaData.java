@@ -16,6 +16,7 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
     private String descripcion;
+    private String prioridad;
 
     @Nullable
     private LocalDateTime deadline;
@@ -60,6 +61,16 @@ public class TareaData implements Serializable {
 
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public void getPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 
     // Sobreescribimos equals y hashCode para que dos tareas sean iguales
