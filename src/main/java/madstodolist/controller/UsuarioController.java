@@ -57,4 +57,12 @@ public class UsuarioController {
         return "redirect:/registrados";
     }
 
+    @GetMapping("/cuenta")
+    public String cuentaUsuario(Model model) {
+        Long idUsuario = managerUserSession.usuarioLogeado();
+        UsuarioData usuario = usuarioService.findById(idUsuario);
+        model.addAttribute("usuario", usuario);
+        return "cuentaUsuario";
+    }
+
 }

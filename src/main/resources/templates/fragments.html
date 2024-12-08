@@ -29,7 +29,7 @@
                         [[${usuarioLoggeado.nombre}]]
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#">Cuenta</a>
+                        <a class="dropdown-item" th:href="@{/cuenta}">Cuenta</a>
                         <a class="dropdown-item" href="/logout">Cerrar sesion [[${usuarioLoggeado.nombre}]]</a>
                     </div>
                 </li>
