@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +26,18 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
+
         if (!usuario.isPresent()) {
             return LoginStatus.USER_NOT_FOUND;
-        } else if (!usuario.get().getPassword().equals(password)) {
+        } else if (!passwordEncoder.matches(password, usuario.get().getPassword())) {
             return LoginStatus.ERROR_PASSWORD;
-        } else if(usuario.get().getBloqueado()){
+        } else if (usuario.get().getBloqueado()) {
             return LoginStatus.USER_BLOCKED;
         } else {
             return LoginStatus.LOGIN_OK;
@@ -45,18 +49,30 @@ public class UsuarioService {
     // El email no debe estar registrado en la base de datos
     @Transactional
     public UsuarioData registrar(UsuarioData usuario) {
-        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
-        if (usuarioBD.isPresent())
-            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
-        else if (usuario.getEmail() == null)
-            throw new UsuarioServiceException("El usuario no tiene email");
-        else if (usuario.getPassword() == null)
+        String emailNormalizado = usuario.getEmail().trim().toLowerCase();
+
+        // Validar email y contraseña
+        if (usuario.getPassword() == null) {
             throw new UsuarioServiceException("El usuario no tiene password");
-        else {
-            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
-            usuarioNuevo = usuarioRepository.save(usuarioNuevo);
-            return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
+        if (usuario.getEmail() == null) {
+            throw new UsuarioServiceException("El usuario no tiene email");
+        }
+
+
+        // Verificar si el usuario ya existe
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(emailNormalizado);
+        if (usuarioBD.isPresent()) {
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
+        }
+
+        // Cifrar la contraseña
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        // Guardar el usuario
+        Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+        usuarioNuevo = usuarioRepository.save(usuarioNuevo);
+        return modelMapper.map(usuarioNuevo, UsuarioData.class);
     }
 
     @Transactional(readOnly = true)
@@ -109,4 +125,44 @@ public class UsuarioService {
         usuario = usuarioRepository.save(usuario);
         return modelMapper.map(usuario, UsuarioData.class);
     }
+
+    @Transactional
+    public UsuarioData editarUsuario(UsuarioData usuarioData) {
+        // Buscar al usuario por su ID
+        Usuario usuario = usuarioRepository.findById(usuarioData.getId()).orElseThrow(
+                () -> new UsuarioServiceException("Usuario no encontrado"));
+
+        // Verificar si el email pertenece a otro usuario
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuarioData.getEmail());
+        if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(usuario.getId())) {
+            throw new UsuarioServiceException("El usuario con email " + usuarioData.getEmail() + " ya está registrado");
+        }
+
+        // Actualizar los datos del usuario
+        usuario.setNombre(usuarioData.getNombre());
+        usuario.setEmail(usuarioData.getEmail());
+        usuario.setFechaNacimiento(usuarioData.getFechaNacimiento());
+
+        usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(usuario, UsuarioData.class);
+    }
+
+    @Transactional
+    public void cambiarPassword(Long usuarioId, String currentPassword, String newPassword) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioServiceException("Usuario no encontrado"));
+
+        // Verificar la contraseña actual
+        if (!passwordEncoder.matches(currentPassword, usuario.getPassword())) {
+            throw new UsuarioServiceException("La contraseña actual no es correcta.");
+        }
+
+        // Actualizar con la nueva contraseña cifrada
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+    }
+
+
+
+
 }
