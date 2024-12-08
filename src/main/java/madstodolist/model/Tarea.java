@@ -1,8 +1,12 @@
 package madstodolist.model;
 
+import com.sun.istack.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +23,9 @@ public class Tarea implements Serializable {
 
     private String descripcion;
 
+    @Nullable
+    private LocalDateTime deadline;
+
     @NotNull
     // Relación muchos-a-uno entre tareas y usuario
     @ManyToOne
@@ -26,6 +33,17 @@ public class Tarea implements Serializable {
     // el ID del usuario con el que está asociado una tarea
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+
+    private String prioridad; // Valores: "Alta", "Media", "Baja"
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
 
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
@@ -37,12 +55,28 @@ public class Tarea implements Serializable {
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
-    public Tarea(Usuario usuario, String titulo, String descripcion) {
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad) {
+        this.prioridad = prioridad;
         this.titulo = titulo;
         this.descripcion = descripcion;
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
+    public Tarea(Usuario usuario, String titulo, String descripcion, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+    }
+
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
+        this.prioridad = prioridad;
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+    }
+    
     // Getters y setters básicos
 
     public Long getId() {
@@ -52,6 +86,14 @@ public class Tarea implements Serializable {
     public String getDescripcion() {return descripcion;}
 
     public void setDescripcion(String descripcion) {this.descripcion = descripcion;}
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
 
     public void setId(Long id) {
         this.id = id;

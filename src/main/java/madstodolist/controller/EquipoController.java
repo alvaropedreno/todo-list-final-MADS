@@ -33,20 +33,27 @@ public class EquipoController {
     }
 
     @GetMapping("/equipos")
-    public String equipos(Model model) {
+    public String equipos(Model model, @RequestParam(defaultValue = "all") String show) {
 
         Long usuarioID = managerUserSession.usuarioLogeado();
 
-        List<EquipoData> equipos = equipoService.findAllOrdenadoPorNombre();
-        //muestra equipos en consola
-        for (EquipoData equipo : equipos) {
-            System.out.println(equipo.getNombre());
+        List<EquipoData> equipos = null;
+
+        if(show.equals("mine")){
+            equipos = equipoService.equiposUsuario(usuarioID);
         }
+        else{
+            equipos = equipoService.findAllOrdenadoPorNombre();
+
+        }
+        System.out.println("Equipos: " + equipos);
         model.addAttribute("equipos", equipos);
         model.addAttribute("usuarioLoggeado", usuarioService.findById(usuarioID));
+        model.addAttribute("show", show);
 
         return "listaEquipos";
     }
+
 
     @GetMapping("/equipos/nuevo")
     public String formNuevoEquipo(@ModelAttribute EquipoData equipoData, Model model) {

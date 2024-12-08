@@ -1,6 +1,10 @@
 package madstodolist.dto;
 
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.Null;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 // Data Transfer Object para la clase Tarea
@@ -12,6 +16,10 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
     private String descripcion;
+    private String prioridad;
+
+    @Nullable
+    private LocalDateTime deadline;
 
     // Getters y setters
 
@@ -45,6 +53,22 @@ public class TareaData implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+    
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 
     // Sobreescribimos equals y hashCode para que dos tareas sean iguales

@@ -1,6 +1,7 @@
 package madstodolist.repository;
 
 
+import madstodolist.dto.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -244,5 +246,55 @@ public class TareaTest {
 
         Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
+    }
+
+    @Test
+    @Transactional
+    public void guardarTareaConPrioridadEnBaseDatos() {
+        // GIVEN
+        // Un usuario en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // Creamos una nueva tarea con prioridad Alta
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS", "Resolver ejercicios", "Alta");
+        tareaRepository.save(tarea);
+
+        // THEN
+        // Verificamos que la tarea se guarda correctamente con su prioridad
+        Tarea tareaBD = tareaRepository.findById(tarea.getId()).orElse(null);
+        assertThat(tareaBD).isNotNull();
+        assertThat(tareaBD.getPrioridad()).isEqualTo("Alta");
+    }
+
+    @Test
+    @Transactional
+    public void testSetAndGetDeadline() {
+        // GIVEN
+        Usuario usuario = new Usuario("user@ua");
+        Tarea tarea = new Tarea(usuario, "Tarea con deadline");
+
+        // WHEN
+        LocalDateTime deadline = LocalDateTime.of(2023, 12, 31, 23, 59);
+        tarea.setDeadline(deadline);
+
+        // THEN
+        assertThat(tarea.getDeadline()).isEqualTo(deadline);
+    }
+
+
+    @Test
+    @Transactional
+    public void testSetAndGetDeadlineData() {
+        // GIVEN
+        TareaData tareaData = new TareaData();
+
+        // WHEN
+        LocalDateTime deadline = LocalDateTime.of(2023, 12, 31, 23, 59);
+        tareaData.setDeadline(deadline);
+
+        // THEN
+        assertThat(tareaData.getDeadline()).isEqualTo(deadline);
     }
 }

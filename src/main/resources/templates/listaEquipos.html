@@ -12,6 +12,32 @@
             <h2>Listado de equipos</h2>
         </div>
     </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <strong>Filtrar</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form method="get" action="/equipos" class="radio-group">
+                    <label>
+                        <input type="radio" name="show" value="all"
+                               th:checked="${show == 'all'}"
+                               onchange="this.form.submit()">
+                        Todos los equipos
+                    </label>
+                    <label>
+                        <input type="radio" name="show" value="mine"
+                               th:checked="${show == 'mine'}"
+                               onchange="this.form.submit()">
+                        Mis equipos
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row mt-3">
         <div class="col">
@@ -72,3 +98,10 @@
 
 </body>
 </html>
+
+<style>
+    .radio-group label {
+        display: block; /* Cada etiqueta en su propia línea */
+        margin-bottom: 5px; /* Espaciado opcional */
+    }
+</style>
