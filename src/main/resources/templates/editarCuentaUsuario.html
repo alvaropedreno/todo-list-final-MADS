@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Editar cuenta')"></head>
+
 <body>
-$END$
+<div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado})"></div>
+
+<div class="container mt-4">
+    <h2>Editar datos de la cuenta</h2>
+    <form method="post" th:action="@{/cuenta/editar}" th:object="${usuario}">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" th:field="*{nombre}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
+        </div>
+        <div class="form-group">
+            <label for="fechaNacimiento">Fecha de nacimiento:</label>
+            <input type="date"
+                   class="form-control"
+                   id="fechaNacimiento"
+                   name="fechaNacimiento"
+                   th:field="*{fechaNacimiento}"
+                   th:attr="max=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                   required>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="/cuenta" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<div th:replace="fragments::javascript"></div>
 </body>
+
 </html>

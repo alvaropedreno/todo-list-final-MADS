@@ -2,6 +2,7 @@ package madstodolist.dto;
 
 import java.util.Date;
 import java.util.Objects;
+import javax.validation.constraints.PastOrPresent;
 
 // Data Transfer Object para la clase Usuario
 public class UsuarioData {
@@ -10,6 +11,7 @@ public class UsuarioData {
     private String email;
     private String nombre;
     private String password;
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura.")
     private Date fechaNacimiento;
     private Boolean admin = false;
     private Boolean bloqueado = false;

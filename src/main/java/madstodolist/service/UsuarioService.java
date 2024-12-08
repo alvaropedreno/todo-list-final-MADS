@@ -109,4 +109,26 @@ public class UsuarioService {
         usuario = usuarioRepository.save(usuario);
         return modelMapper.map(usuario, UsuarioData.class);
     }
+
+    @Transactional
+    public UsuarioData editarUsuario(UsuarioData usuarioData) {
+        // Buscar al usuario por su ID
+        Usuario usuario = usuarioRepository.findById(usuarioData.getId()).orElseThrow(
+                () -> new UsuarioServiceException("Usuario no encontrado"));
+
+        // Verificar si el email pertenece a otro usuario
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuarioData.getEmail());
+        if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(usuario.getId())) {
+            throw new UsuarioServiceException("El usuario con email " + usuarioData.getEmail() + " ya está registrado");
+        }
+
+        // Actualizar los datos del usuario
+        usuario.setNombre(usuarioData.getNombre());
+        usuario.setEmail(usuarioData.getEmail());
+        usuario.setFechaNacimiento(usuarioData.getFechaNacimiento());
+
+        usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(usuario, UsuarioData.class);
+    }
+
 }
