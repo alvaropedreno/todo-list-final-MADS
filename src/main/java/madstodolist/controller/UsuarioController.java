@@ -6,6 +6,7 @@ import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
+import madstodolist.service.UsuarioServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -103,4 +105,31 @@ public class UsuarioController {
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
+
+
+
+    @PostMapping("/cuenta/cambiarPassword")
+    public String cambiarPassword(@ModelAttribute UsuarioData usuarioData, Model model) {
+        Long idUsuario = managerUserSession.usuarioLogeado(); // Obtener el ID del usuario logueado desde la sesión
+
+        // Verificar que la nueva contraseña y su confirmación coincidan
+        if (!usuarioData.getNewPassword().equals(usuarioData.getConfirmNewPassword())) {
+            model.addAttribute("error", "Las contraseñas no coinciden.");
+            return "cuenta/cambiarPassword";
+        }
+
+        // Cambiar la contraseña
+        try {
+            usuarioService.cambiarPassword(idUsuario, usuarioData.getCurrentPassword(), usuarioData.getNewPassword());
+        } catch (UsuarioServiceException e) {
+            model.addAttribute("error", e.getMessage());
+            return "cuenta/cambiarPassword";
+        }
+
+        // Redirigir a la página de cuenta con un mensaje de éxito
+        return "redirect:/cuenta?success=contraseñaActualizada";
+    }
+
+
+
 }

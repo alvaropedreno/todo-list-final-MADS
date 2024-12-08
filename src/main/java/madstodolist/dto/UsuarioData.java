@@ -11,6 +11,9 @@ public class UsuarioData {
     private String email;
     private String nombre;
     private String password;
+    private String currentPassword; // Contraseña actual proporcionada por el usuario
+    private String newPassword;     // Nueva contraseña proporcionada por el usuario
+    private String confirmNewPassword; // Confirmar nueva contraseña
     @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura.")
     private Date fechaNacimiento;
     private Boolean admin = false;
@@ -68,6 +71,29 @@ public class UsuarioData {
 
     public void setBloqueado(Boolean bloqueado){
         this.bloqueado = bloqueado;
+    }
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales

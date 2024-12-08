@@ -138,4 +138,22 @@ public class UsuarioService {
         return modelMapper.map(usuario, UsuarioData.class);
     }
 
+    @Transactional
+    public void cambiarPassword(Long usuarioId, String currentPassword, String newPassword) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioServiceException("Usuario no encontrado"));
+
+        // Verificar la contraseña actual
+        if (!passwordEncoder.matches(currentPassword, usuario.getPassword())) {
+            throw new UsuarioServiceException("La contraseña actual no es correcta.");
+        }
+
+        // Actualizar con la nueva contraseña cifrada
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+    }
+
+
+
+
 }

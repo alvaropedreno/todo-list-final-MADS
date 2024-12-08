@@ -1,37 +1,75 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: head (titulo='Editar cuenta')"></head>
+<head th:replace="fragments :: head (titulo='Gestión de la cuenta')"></head>
 
 <body>
 <div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado})"></div>
 
 <div class="container mt-4">
-    <h2>Editar datos de la cuenta</h2>
-    <form method="post" th:action="@{/cuenta/editar}" th:object="${usuario}">
-        <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" th:field="*{nombre}" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
-        </div>
-        <div class="form-group">
-            <label for="fechaNacimiento">Fecha de nacimiento:</label>
-            <input type="date"
-                   class="form-control"
-                   id="fechaNacimiento"
-                   name="fechaNacimiento"
-                   th:field="*{fechaNacimiento}"
-                   th:attr="max=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                   required>
-        </div>
+    <h2>Gestión de la cuenta</h2>
 
+    <!-- Sección para editar datos del usuario -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Editar datos de la cuenta
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="@{/cuenta/editar}" th:object="${usuario}">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" th:field="*{nombre}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
+                </div>
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de nacimiento:</label>
+                    <input type="date"
+                           class="form-control"
+                           id="fechaNacimiento"
+                           name="fechaNacimiento"
+                           th:field="*{fechaNacimiento}"
+                           th:attr="max=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                           required>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </form>
+        </div>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
-        <a href="/cuenta" class="btn btn-secondary">Cancelar</a>
-    </form>
+    <!-- Sección para cambiar la contraseña -->
+    <div class="card">
+        <div class="card-header">
+            Cambiar contraseña
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="@{/cuenta/cambiarPassword}" th:object="${usuario}">
+                <div class="form-group">
+                    <label for="currentPassword">Contraseña actual:</label>
+                    <input type="password" id="currentPassword" name="currentPassword" class="form-control" th:field="*{currentPassword}" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nueva contraseña:</label>
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" th:field="*{newPassword}" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">Confirmar nueva contraseña:</label>
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control" th:field="*{confirmNewPassword}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+                <a href="/cuenta" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes de éxito o error -->
+    <div class="mt-4">
+        <div class="alert alert-success" th:if="${success != null}" th:text="${success}"></div>
+        <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+    </div>
+
 </div>
 
 <div th:replace="fragments::javascript"></div>
