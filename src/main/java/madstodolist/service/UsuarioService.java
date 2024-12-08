@@ -51,6 +51,15 @@ public class UsuarioService {
     public UsuarioData registrar(UsuarioData usuario) {
         String emailNormalizado = usuario.getEmail().trim().toLowerCase();
 
+        // Validar email y contraseña
+        if (usuario.getPassword() == null) {
+            throw new UsuarioServiceException("El usuario no tiene password");
+        }
+        if (usuario.getEmail() == null) {
+            throw new UsuarioServiceException("El usuario no tiene email");
+        }
+
+
         // Verificar si el usuario ya existe
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(emailNormalizado);
         if (usuarioBD.isPresent()) {

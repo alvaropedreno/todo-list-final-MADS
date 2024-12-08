@@ -176,4 +176,63 @@ public class UsuarioServiceTest {
 
         assertThat(existeAdmin).isTrue();
     }
+
+    @Test
+    public void servicioCambiarPassword() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // WHEN
+        // Cambiamos la contraseña
+        usuarioService.cambiarPassword(usuarioId, "123", "nuevaPassword123");
+
+        // THEN
+        // El usuario puede iniciar sesión con la nueva contraseña, pero no con la antigua
+        UsuarioService.LoginStatus loginStatusConNueva = usuarioService.login("user@ua", "nuevaPassword123");
+        UsuarioService.LoginStatus loginStatusConAntigua = usuarioService.login("user@ua", "123");
+
+        assertThat(loginStatusConNueva).isEqualTo(UsuarioService.LoginStatus.LOGIN_OK);
+        assertThat(loginStatusConAntigua).isEqualTo(UsuarioService.LoginStatus.ERROR_PASSWORD);
+    }
+
+    @Test
+    public void servicioCambiarPasswordExcepcionSiPasswordActualEsIncorrecta() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // WHEN, THEN
+        // Intentar cambiar la contraseña con la actual incorrecta lanza una excepción
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.cambiarPassword(usuarioId, "passwordIncorrecta", "nuevaPassword123");
+        });
+    }
+
+    @Test
+    public void servicioEditarUsuario() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // Datos actualizados
+        UsuarioData usuarioActualizado = new UsuarioData();
+        usuarioActualizado.setId(usuarioId);
+        usuarioActualizado.setNombre("Nombre Actualizado");
+        usuarioActualizado.setEmail("nuevo.email@ua");
+
+        // WHEN
+        // Editamos los datos del usuario
+        usuarioService.editarUsuario(usuarioActualizado);
+
+        // THEN
+        // Los datos se actualizan correctamente en la BD
+        UsuarioData usuarioBD = usuarioService.findById(usuarioId);
+        assertThat(usuarioBD.getNombre()).isEqualTo("Nombre Actualizado");
+        assertThat(usuarioBD.getEmail()).isEqualTo("nuevo.email@ua");
+    }
+
+
+
+
 }
