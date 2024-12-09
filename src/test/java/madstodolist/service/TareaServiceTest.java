@@ -190,7 +190,7 @@ public class TareaServiceTest {
 
         // WHEN
         // Modificamos el estado de la tarea
-        tareaService.modificarEstadoTarea(tareaId, "Finalizada");
+        tareaService.modificaEstadoTarea(tareaId, "Finalizada");
 
         // THEN
         // Verificamos que el estado ha cambiado

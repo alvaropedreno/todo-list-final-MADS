@@ -104,6 +104,7 @@ public class TareaController {
         tareaData.setTitulo(tarea.getTitulo());
         tareaData.setDescripcion(tarea.getDescripcion());
         tareaData.setPrioridad(tarea.getPrioridad());
+        tareaData.setEstado(tarea.getEstado());
         return "formEditarTarea";
     }
 
@@ -122,6 +123,7 @@ public class TareaController {
         tareaService.modificaTituloTarea(idTarea, tareaData.getTitulo());
         tareaService.modificarDescripcionTarea(idTarea, tareaData.getDescripcion());
         tareaService.modificaPrioridadTarea(idTarea, tareaData.getPrioridad());
+        tareaService.modificaEstadoTarea(idTarea, tareaData.getEstado());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
         return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }
