@@ -297,4 +297,23 @@ public class TareaTest {
         // THEN
         assertThat(tareaData.getDeadline()).isEqualTo(deadline);
     }
+
+    @Test
+    public void crearTareaComoPendiente() {
+
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        assertThat(tarea.getEstado()).isEqualTo("Pendiente");
+    }
+
+    @Test
+    public void modificarEstadoTarea() {
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        assertThat(tarea.getEstado()).isEqualTo("Pendiente");
+        tarea.setEstado("Acabada");
+        assertThat(tarea.getEstado()).isEqualTo("Acabada");
+    }
 }

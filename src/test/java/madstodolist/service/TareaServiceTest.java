@@ -181,5 +181,23 @@ public class TareaServiceTest {
         assertThat(tarea.getPrioridad()).isEqualTo("Baja");
     }
 
+    @Test
+    public void testModificarEstadoTarea(){
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // Modificamos el estado de la tarea
+        tareaService.modificarEstadoTarea(tareaId, "Finalizada");
+
+        // THEN
+        // Verificamos que el estado ha cambiado
+        TareaData tarea = tareaService.findById(tareaId);
+        assertThat(tarea).isNotNull();
+        assertThat(tarea.getEstado()).isEqualTo("Finalizada");
+    }
+
 
 }
