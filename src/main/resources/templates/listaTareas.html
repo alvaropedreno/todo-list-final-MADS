@@ -21,6 +21,7 @@
                     <th>Id</th>
                     <th>Tarea</th>
                     <th>Descripción</th>
+                    <th>Estado</th>
                     <th>Prioridad</th>
                     <th>Acción</th>
                 </tr>
@@ -30,11 +31,12 @@
                     <td th:text="${tarea.id}"></td>
                     <td th:text="${tarea.titulo}"></td>
                     <td th:text="${tarea.descripcion}"></td>
+                    <td th:text="${tarea.estado}"></td>
                     <td th:text="${tarea.prioridad}"></td>
                     <td><a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}/editar(id=${tarea.id})}"/>editar</a>
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                            th:onclick="'del(\'/tareas/' + ${tarea.id} + '\')'">borrar</button>
-                        <a class="btn btn-sucess btn-xs" th:href="@{/tareas/{id}(id=${tarea.id})}"/>Ver Detalles</a>
+                        <a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}(id=${tarea.id})}"/>Ver Detalles</a>
                     </td>
                 </tr>
                 </tbody>

@@ -37,6 +37,8 @@ public class Tarea implements Serializable {
 
     private String prioridad; // Valores: "Alta", "Media", "Baja"
 
+    private String estado; // Valores: "Pendiente", "En proceso", "Finalizada"
+
     public String getPrioridad() {
         return prioridad;
     }
@@ -52,6 +54,7 @@ public class Tarea implements Serializable {
     // Al crear una tarea la asociamos automáticamente a un usuario
     public Tarea(Usuario usuario, String titulo) {
         this.titulo = titulo;
+        this.estado = "Pendiente";
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -59,6 +62,7 @@ public class Tarea implements Serializable {
         this.prioridad = prioridad;
         this.titulo = titulo;
         this.descripcion = descripcion;
+        this.estado = "Pendiente";
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -66,6 +70,7 @@ public class Tarea implements Serializable {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.deadline = deadline;
+        this.estado = "Pendiente";
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -74,6 +79,7 @@ public class Tarea implements Serializable {
         this.descripcion = descripcion;
         this.deadline = deadline;
         this.prioridad = prioridad;
+        this.estado = "Pendiente";
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
     
@@ -105,6 +111,14 @@ public class Tarea implements Serializable {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     // Getters y setters de la relación muchos-a-uno con Usuario
