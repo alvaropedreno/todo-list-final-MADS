@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +61,6 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene email");
         }
 
-
         // Verificar si el usuario ya existe
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(emailNormalizado);
         if (usuarioBD.isPresent()) {
@@ -71,6 +72,12 @@ public class UsuarioService {
 
         // Guardar el usuario
         Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+
+        // Asignar la foto si está presente
+        if (usuario.getFoto() != null) {
+            usuarioNuevo.setFoto(usuario.getFoto()); // `getFoto()` devuelve `byte[]`
+        }
+
         usuarioNuevo = usuarioRepository.save(usuarioNuevo);
         return modelMapper.map(usuarioNuevo, UsuarioData.class);
     }
@@ -127,25 +134,38 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioData editarUsuario(UsuarioData usuarioData) {
-        // Buscar al usuario por su ID
+    public void editarUsuario(UsuarioData usuarioData) throws IOException {
         Usuario usuario = usuarioRepository.findById(usuarioData.getId()).orElseThrow(
                 () -> new UsuarioServiceException("Usuario no encontrado"));
 
-        // Verificar si el email pertenece a otro usuario
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuarioData.getEmail());
-        if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(usuario.getId())) {
-            throw new UsuarioServiceException("El usuario con email " + usuarioData.getEmail() + " ya está registrado");
-        }
-
-        // Actualizar los datos del usuario
+        // Actualizar datos básicos
         usuario.setNombre(usuarioData.getNombre());
         usuario.setEmail(usuarioData.getEmail());
         usuario.setFechaNacimiento(usuarioData.getFechaNacimiento());
 
-        usuario = usuarioRepository.save(usuario);
-        return modelMapper.map(usuario, UsuarioData.class);
+        // Procesar la foto solo si existe
+        MultipartFile foto = usuarioData.getFotoMultipartFile();
+        if (foto != null && !foto.isEmpty()) {
+            // Convertir MultipartFile a byte[]
+            byte[] contenidoFoto = foto.getBytes();
+            usuarioData.setFoto(contenidoFoto);
+            usuario.setFoto(contenidoFoto);
+
+            // Aquí puedes guardar el contenidoFoto en una base de datos o archivo
+            System.out.println("Foto procesada correctamente, tamaño: " + contenidoFoto.length + " bytes");
+        } else {
+            System.out.println("No se subió ninguna foto o la foto está vacía.");
+        }
+
+        // Procesar otros datos del usuario (ejemplo)
+        System.out.println("Actualizando usuario con nombre: " + usuarioData.getNombre());
+
+        usuarioRepository.save(usuario);
+
     }
+
+
+
 
     @Transactional
     public void cambiarPassword(Long usuarioId, String currentPassword, String newPassword) {

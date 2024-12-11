@@ -6,15 +6,16 @@ import madstodolist.dto.RegistroData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @Controller
@@ -73,9 +74,8 @@ public class LoginController {
         return "formRegistro";
     }
 
-   @PostMapping("/registro")
-   public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
-
+    @PostMapping("/registro")
+    public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "formRegistro";
         }
@@ -93,11 +93,32 @@ public class LoginController {
         usuario.setNombre(registroData.getNombre());
         usuario.setAdmin(registroData.getAdmin());
 
+        try {
+            // Procesar la foto si se subió
+            if (registroData.getFoto() != null && !registroData.getFoto().isEmpty()) {
+                usuario.setFoto(registroData.getFoto().getBytes());
+            }
+        } catch (IOException e) {
+            model.addAttribute("registroData", registroData);
+            model.addAttribute("error", "Error al procesar la foto.");
+            return "formRegistro";
+        }
+
         usuarioService.registrar(usuario);
         return "redirect:/login";
-   }
+    }
 
-   @GetMapping("/logout")
+    @GetMapping("/usuario/{id}/foto")
+    @ResponseBody
+    public byte[] obtenerFotoUsuario(@PathVariable Long id) {
+        UsuarioData usuario = usuarioService.findById(id);
+        if (usuario.getFoto() == null) {
+            throw new RuntimeException("El usuario no tiene una foto asociada");
+        }
+        return usuario.getFoto();
+    }
+
+    @GetMapping("/logout")
    public String logout(HttpSession session) {
         managerUserSession.logout();
         return "redirect:/login";

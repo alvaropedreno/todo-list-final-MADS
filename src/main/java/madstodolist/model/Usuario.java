@@ -26,6 +26,10 @@ public class Usuario implements Serializable {
     private Date fechaNacimiento;
     private Boolean admin = false;
     private Boolean bloqueado = false;
+    @Lob
+    private byte[] foto;
+
+
 
     // La relación es lazy por defecto,
     // es necesario acceder a la lista de tareas para que se carguen
@@ -101,6 +105,10 @@ public class Usuario implements Serializable {
     public void setBloqueado(Boolean bloqueado){
         this.bloqueado = bloqueado;
     }
+
+    public byte[] getFoto() {return foto;}
+
+    public void setFoto(byte[] foto) {this.foto = foto;}
 
     // Getters y setters de las relaciones
 

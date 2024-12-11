@@ -1,11 +1,15 @@
 package madstodolist.service;
 
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Usuario;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -210,7 +214,7 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    public void servicioEditarUsuario() {
+    public void servicioEditarUsuario() throws IOException {
         // GIVEN
         // Un usuario en la BD
         Long usuarioId = addUsuarioBD();
@@ -231,6 +235,22 @@ public class UsuarioServiceTest {
         assertThat(usuarioBD.getNombre()).isEqualTo("Nombre Actualizado");
         assertThat(usuarioBD.getEmail()).isEqualTo("nuevo.email@ua");
     }
+
+    @Test
+    public void crearUsuarioConFoto() throws Exception {
+        // GIVEN
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        usuario.setNombre("Juan Gutiérrez");
+
+        byte[] fotoContenido = "Contenido de prueba".getBytes();
+        usuario.setFoto(fotoContenido);
+
+        // THEN
+        assertThat(usuario.getFoto()).isEqualTo(fotoContenido);
+    }
+
+
+
 
 
 
