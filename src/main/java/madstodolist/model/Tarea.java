@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,6 +37,8 @@ public class Tarea implements Serializable {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    @OneToMany(mappedBy = "tarea", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
 
     private String prioridad; // Valores: "Alta", "Media", "Baja"
 
@@ -55,6 +60,7 @@ public class Tarea implements Serializable {
     public Tarea(Usuario usuario, String titulo) {
         this.titulo = titulo;
         this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -63,6 +69,7 @@ public class Tarea implements Serializable {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -71,6 +78,7 @@ public class Tarea implements Serializable {
         this.descripcion = descripcion;
         this.deadline = deadline;
         this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -80,6 +88,7 @@ public class Tarea implements Serializable {
         this.deadline = deadline;
         this.prioridad = prioridad;
         this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
     
@@ -125,6 +134,23 @@ public class Tarea implements Serializable {
 
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void addComentario(Comentario comentario) {
+        comentarios.add(comentario);
+    }
+
+    public void removeComentario(Comentario comentario) {
+        comentarios.remove(comentario);
+        comentario.setTarea(null);
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
     // Método para establecer la relación con el usuario

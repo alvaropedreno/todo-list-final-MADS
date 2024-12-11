@@ -1,6 +1,9 @@
 package madstodolist.service;
 
+import madstodolist.dto.ComentarioData;
+import madstodolist.model.Comentario;
 import madstodolist.model.Tarea;
+import madstodolist.repository.ComentarioRepository;
 import madstodolist.repository.TareaRepository;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;

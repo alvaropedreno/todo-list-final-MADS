@@ -199,5 +199,4 @@ public class TareaServiceTest {
         assertThat(tarea.getEstado()).isEqualTo("Finalizada");
     }
 
-
 }
