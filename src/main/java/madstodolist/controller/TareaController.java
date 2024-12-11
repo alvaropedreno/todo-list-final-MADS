@@ -217,4 +217,57 @@ public class TareaController {
         comentarioService.borrarComentario(comentarioId);
         return "";
     }
+
+    @GetMapping("/comentarios/editar/{id}")
+    public String formEditarComentario(@PathVariable Long id, Model model) {
+        Comentario comentario = comentarioService.findById(id);
+        if (comentario == null) {
+            throw new RuntimeException("Comentario no encontrado");
+        }
+
+        Long idTarea = comentario.getTarea().getId();
+
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
+        UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
+
+        if (tarea.getDeadline() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(now, tarea.getDeadline());
+            if (duration.isNegative()) {
+                duration = duration.negated();
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String overdueTime = String.format("La tarea está retrasada por %d días y %02d horas y %02d minutos", days, hours, minutes);
+                model.addAttribute("overdueTime", overdueTime);
+            } else {
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String remainingTime = String.format("Quedan %d días y %02d:%02d horas", days, hours, minutes);
+                model.addAttribute("remainingTime", remainingTime);
+            }
+        }
+
+        model.addAttribute("usuarioLoggeado", usuarioLoggeado);
+        model.addAttribute("usuario", usuarioLoggeado);
+        model.addAttribute("tarea", tarea);
+        model.addAttribute("autor", usuarioLoggeado);
+        model.addAttribute("comentario", comentario);
+        return "editarComentario";
+    }
+
+    @PostMapping("/comentario/{id}/editar")
+    public String editarComentario(@PathVariable Long id, @RequestParam String comentario) {
+        comentarioService.modificarComentario(id, comentario);
+        Comentario comentarioData = comentarioService.findById(id);
+        return "redirect:/tareas/" + comentarioData.getTarea().getId();
+    }
 }

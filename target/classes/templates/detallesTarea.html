@@ -80,10 +80,17 @@
                                         <span class="text-muted" th:text="${#temporals.format(comentario.fecha, 'dd/MM/yyyy HH:mm')}">Fecha del comentario</span>
                                     </div>
                                     <!-- Botón para borrar comentario -->
-                                    <button class="bi bi-trash-fill fs-5"
+                                    <button class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center rounded-circle"
                                             th:onclick="'confirmarBorrado(' + ${tarea.id} + ', ' + ${comentario.id} + ')'"
                                             style="width: 40px; height: 40px;">
                                         <i class="bi bi-trash-fill fs-5"></i>
+                                    </button>
+                                    <!-- Botón para editar comentario -->
+                                    <button class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center rounded-circle"
+                                            th:data-id-comentario="${comentario.id}"
+                                            onclick="redirigirEditarComentario(this)"
+                                            style="width: 40px; height: 40px;">
+                                        <i class="bi bi-pencil-fill fs-5"></i>
                                     </button>
                                 </div>
                                 <div class="p-3 bg-light rounded-3 shadow-sm">
@@ -102,6 +109,10 @@
 <!-- Scripts -->
 <div th:replace="fragments::javascript"></div>
 <script>
+    function redirigirEditarComentario(button) {
+        const idComentario = button.getAttribute('data-id-comentario');
+        window.location.href = `/comentarios/editar/${idComentario}`;
+    }
     function confirmarBorrado(tareaId, idComentario) {
         if (confirm("¿Estás seguro de que quieres borrar este comentario?")) {
             fetch(`/borrarComentario/${idComentario}/enTarea/${tareaId}`, {
