@@ -34,9 +34,6 @@ public class TareaService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private ComentarioService comentarioService;
-
     @Transactional
     public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
         logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);

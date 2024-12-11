@@ -57,6 +57,34 @@
                         <p class="text-danger ps-3" th:if="${remainingTime != null}" th:text="${remainingTime}"></p>
                         <p class="text-danger ps-3" th:if="${overdueTime != null}" th:text="${overdueTime}"></p>
                     </div>
+
+                    <!-- Formulario para agregar comentario -->
+                    <form method="post" th:action="@{/tareas/{id}/comentar(id=${tarea.id})}" class="mb-4">
+                        <div class="form-group mb-3">
+                            <label for="comentario" class="form-label">Escribe un comentario:</label>
+                            <textarea class="form-control rounded-3 shadow-sm" id="comentario" name="comentario" rows="3" placeholder="Escribe algo..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-3 shadow-sm">
+                            <i class="bi bi-send"></i> Enviar comentario
+                        </button>
+                    </form>
+
+                    <!-- Lista de comentarios -->
+                    <div>
+                        <h3 class="mb-3">Comentarios</h3>
+                        <ul class="list-unstyled">
+                            <li th:each="comentario : ${comentarios}" class="mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <strong class="me-2" th:text="${comentario.usuario.nombre}">Nombre del Usuario</strong>
+                                    <span class="text-muted" th:text="${#temporals.format(comentario.fecha, 'dd/MM/yyyy HH:mm')}">Fecha del comentario</span>
+                                </div>
+                                <div class="p-3 bg-light rounded-3 shadow-sm">
+                                    <p class="mb-0" th:text="${comentario.comentario}">Texto del comentario</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>

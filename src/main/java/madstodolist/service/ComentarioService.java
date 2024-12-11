@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class ComentarioService {
 
@@ -35,6 +37,7 @@ public class ComentarioService {
         comentario.setTarea(tarea);
         comentario.setUsuario(usuario);
         comentario.setComentario(comentarioTexto);
+        comentario.setFecha(LocalDateTime.now());
         comentarioRepository.save(comentario);
 
         tarea.addComentario(comentario);
@@ -57,5 +60,10 @@ public class ComentarioService {
         Comentario comentario = comentarioRepository.findById(comentarioId).orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
         comentario.setComentario(nuevoComentario);
         comentarioRepository.save(comentario);
+    }
+
+    @Transactional
+    public Comentario findById(Long comentarioId) {
+        return comentarioRepository.findById(comentarioId).orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
     }
 }

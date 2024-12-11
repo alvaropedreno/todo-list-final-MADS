@@ -5,6 +5,8 @@ import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Comentario;
+import madstodolist.service.ComentarioService;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class TareaController {
 
     @Autowired
     ManagerUserSession managerUserSession;
+
+    @Autowired
+    ComentarioService comentarioService;
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
@@ -173,10 +178,28 @@ public class TareaController {
             }
         }
 
+        List<Comentario> comentarios = tarea.getComentarios();
+        comentarios.sort((c1, c2) -> c2.getFecha().compareTo(c1.getFecha())); // Ordenar por fecha descendente
+
+        model.addAttribute("comentarios", comentarios);
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("usuario", usuarioLoggeado);
         model.addAttribute("tarea", tarea);
         model.addAttribute("autor", autor.getNombre());
         return "detallesTarea";
+    }
+
+    @PostMapping("/tareas/{tareaId}/comentar")
+    public String agregarComentario(@PathVariable Long tareaId, @RequestParam String comentario) {
+        TareaData tarea = tareaService.findById(tareaId);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        Long idUsuario = tarea.getUsuarioId();
+
+        comprobarUsuarioLogeado(idUsuario);
+        comentarioService.crearComentario(tareaId, idUsuario, comentario);
+        return "redirect:/tareas/" + tareaId;
     }
 }
