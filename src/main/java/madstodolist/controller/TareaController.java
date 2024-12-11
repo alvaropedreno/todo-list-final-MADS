@@ -202,4 +202,19 @@ public class TareaController {
         comentarioService.crearComentario(tareaId, idUsuario, comentario);
         return "redirect:/tareas/" + tareaId;
     }
+
+    @DeleteMapping("/borrarComentario/{comentarioId}/enTarea/{tareaId}")
+    @ResponseBody
+    public String borrarComentario(@PathVariable Long comentarioId, @PathVariable Long tareaId) {
+        TareaData tarea = tareaService.findById(tareaId);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        Long idUsuario = tarea.getUsuarioId();
+
+        comprobarUsuarioLogeado(idUsuario);
+        comentarioService.borrarComentario(comentarioId);
+        return "";
+    }
 }

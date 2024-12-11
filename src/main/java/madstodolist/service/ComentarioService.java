@@ -49,9 +49,20 @@ public class ComentarioService {
     @Transactional
     public void borrarComentario(Long comentarioId) {
         Comentario comentario = comentarioRepository.findById(comentarioId).orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+
+        if (comentario == null) {
+            throw new RuntimeException("Comentario no encontrado");
+        }
+
         Tarea tarea = comentario.getTarea();
+
+        if (tarea == null) {
+            throw new RuntimeException("Tarea no encontrada");
+        }
+
         tarea.getComentarios().remove(comentario);
         tareaRepository.save(tarea);
+
         comentarioRepository.deleteById(comentarioId);
     }
 
