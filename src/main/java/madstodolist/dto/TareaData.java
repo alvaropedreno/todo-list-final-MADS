@@ -1,10 +1,12 @@
 package madstodolist.dto;
 
+import madstodolist.model.Comentario;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 // Data Transfer Object para la clase Tarea
@@ -21,6 +23,8 @@ public class TareaData implements Serializable {
 
     @Nullable
     private LocalDateTime deadline;
+
+    private List<Comentario> comentarios;
 
     // Getters y setters
 
@@ -78,6 +82,14 @@ public class TareaData implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
     // Sobreescribimos equals y hashCode para que dos tareas sean iguales

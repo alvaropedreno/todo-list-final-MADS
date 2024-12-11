@@ -1,6 +1,9 @@
 package madstodolist.service;
 
+import madstodolist.dto.ComentarioData;
+import madstodolist.model.Comentario;
 import madstodolist.model.Tarea;
+import madstodolist.repository.ComentarioRepository;
 import madstodolist.repository.TareaRepository;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
@@ -30,6 +33,9 @@ public class TareaService {
     private TareaRepository tareaRepository;
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private ComentarioService comentarioService;
 
     @Transactional
     public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
