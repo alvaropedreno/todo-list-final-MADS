@@ -80,18 +80,21 @@
                                         <span class="text-muted" th:text="${#temporals.format(comentario.fecha, 'dd/MM/yyyy HH:mm')}">Fecha del comentario</span>
                                     </div>
                                     <!-- Botón para borrar comentario -->
-                                    <button class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center rounded-circle"
+                                    <a class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center rounded-circle shadow"
+                                            th:if="${usuarioLoggeado.id == comentario.usuario.id}"
                                             th:onclick="'confirmarBorrado(' + ${tarea.id} + ', ' + ${comentario.id} + ')'"
-                                            style="width: 40px; height: 40px;">
-                                        <i class="bi bi-trash-fill fs-5"></i>
-                                    </button>
+                                            style="width: 50px; height: 50px; border-width: 2px;">
+                                        <i class="bi bi-trash-fill fs-4"></i>Borrar
+                                    </a>
+
                                     <!-- Botón para editar comentario -->
-                                    <button class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center rounded-circle"
+                                    <a class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center rounded-circle shadow"
+                                            th:if="${usuarioLoggeado.id == comentario.usuario.id}"
                                             th:data-id-comentario="${comentario.id}"
                                             onclick="redirigirEditarComentario(this)"
-                                            style="width: 40px; height: 40px;">
-                                        <i class="bi bi-pencil-fill fs-5"></i>
-                                    </button>
+                                            style="width: 50px; height: 50px; border-width: 2px;">
+                                        <i class="bi bi-pencil-fill fs-4"></i>Editar
+                                    </a>
                                 </div>
                                 <div class="p-3 bg-light rounded-3 shadow-sm">
                                     <p class="mb-0" th:text="${comentario.comentario}">Texto del comentario</p>
