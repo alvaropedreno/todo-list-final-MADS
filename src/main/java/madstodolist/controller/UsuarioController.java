@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -90,13 +94,34 @@ public class UsuarioController {
 
 
     @PostMapping("/cuenta/editar")
-    public String actualizarCuentaUsuario(@ModelAttribute UsuarioData usuarioData) {
-        Long idUsuario = managerUserSession.usuarioLogeado();
-        usuarioData.setId(idUsuario); // Asegurarse de que el ID esté presente
-        usuarioService.editarUsuario(usuarioData);
+    public String actualizarCuentaUsuario(
+            @ModelAttribute("usuarioData") @Valid UsuarioData usuarioData,
+            BindingResult result,
+            @RequestParam("fotoMultipartFile") MultipartFile foto, // Captura el archivo del formulario
+            Model model
+    ) throws IOException {
+        // Validación del formulario
+        if (result.hasErrors()) {
+            return "actualizarCuenta"; // Vuelve al formulario si hay errores
+        }
 
+        // Procesa el archivo subido
+        try {
+            if (foto != null && !foto.isEmpty()) {
+                usuarioData.setFotoMultipartFile(foto); // Asigna el archivo al modelo
+                byte[] contenidoFoto = foto.getBytes(); // Convierte a byte[] si es necesario
+                usuarioData.setFoto(contenidoFoto);     // Supongamos que tienes un campo byte[] 'foto'
+            }
+        } catch (IOException e) {
+            model.addAttribute("error", "Error al procesar la imagen.");
+            return "actualizarCuenta"; // Vuelve al formulario con un mensaje de error
+        }
+
+        // Guardar usuarioData en la base de datos u otras acciones
+        usuarioService.editarUsuario(usuarioData);
         return "redirect:/cuenta";
     }
+
 
 
     @InitBinder

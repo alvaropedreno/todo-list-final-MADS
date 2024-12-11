@@ -1,5 +1,7 @@
 package madstodolist.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
 import java.util.Objects;
 import javax.validation.constraints.PastOrPresent;
@@ -18,6 +20,8 @@ public class UsuarioData {
     private Date fechaNacimiento;
     private Boolean admin = false;
     private Boolean bloqueado = false;
+    private byte[] foto;
+    private MultipartFile fotoMultipartFile;
 
     // Getters y setters
 
@@ -95,7 +99,21 @@ public class UsuarioData {
     public void setConfirmNewPassword(String confirmNewPassword) {
         this.confirmNewPassword = confirmNewPassword;
     }
+    public MultipartFile getFotoMultipartFile() {
+        return fotoMultipartFile;
+    }
 
+    public void setFotoMultipartFile(MultipartFile fotoMultipartFile) {
+        this.fotoMultipartFile = fotoMultipartFile;
+    }
+
+    public byte[] getFoto() {
+        return foto;
+    }
+
+    public void setFoto(byte[] foto) {
+        this.foto = foto;
+    }
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)
 

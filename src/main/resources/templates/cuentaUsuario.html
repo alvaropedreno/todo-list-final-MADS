@@ -13,6 +13,15 @@
             <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
             <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
             <p><strong>Fecha de nacimiento:</strong> <span th:text="${#dates.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}"></span></p>
+            <p><strong>Foto:</strong></p>
+            <div>
+                <img th:if="${usuario.foto != null}"
+                     th:src="@{'/usuario/' + ${usuario.id} + '/foto'}"
+                     alt="Foto del usuario"
+                     style="max-width: 150px; max-height: 150px; border-radius: 50%;">
+                <p th:if="${usuario.foto == null}">Sin foto</p>
+            </div>
+
         </div>
     </div>
     <a href="/cuenta/editar" class="btn btn-primary mt-3">Editar</a>
