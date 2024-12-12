@@ -14,7 +14,7 @@
 
     <div class="row justify-content-center">
         <div class="col-6">
-            <form method="post" th:action="@{/registro}" th:object="${registroData}">
+            <form method="post" enctype="multipart/form-data" th:action="@{/registro}" th:object="${registroData}">
                 <div class="row justify-content-center">
                     <div class="col-6">
                         <div class="form-group">
@@ -43,6 +43,10 @@
                             <input type="checkbox" class="form-check-input" name="adminCheck" id="adminCheck"
                                    th:field="*{admin}"/>
                             <label for="adminCheck">Administrador</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="foto">Subir foto:</label>
+                            <input type="file" class="form-control" id="foto" name="foto" th:field="*{foto}" accept="image/*">
                         </div>
 
                         <button type="submit" class="btn btn-primary">Registro</button>

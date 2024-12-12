@@ -198,19 +198,21 @@
 </script>
 <script>
     function removeSubtarea(subtareaId) {
-        const tareaPadreId = document.getElementById('tarea-id').innerText;
-        fetch(`/tareas/${tareaPadreId}/removeSubtarea/${subtareaId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert('Error al eliminar la subtarea.');
-            }
-        });
+        if (confirm("¿Estás seguro de que quieres eliminar esta subtarea de la lista?")) {
+            const tareaPadreId = document.getElementById('tarea-id').innerText;
+            fetch(`/tareas/${tareaPadreId}/removeSubtarea/${subtareaId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar la subtarea.');
+                }
+            });
+        }
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

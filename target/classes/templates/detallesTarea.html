@@ -172,26 +172,6 @@
 <!-- Scripts -->
 <div th:replace="fragments::javascript"></div>
 <script>
-<<<<<<< HEAD
-    function removeSubtarea(subtareaId) {
-        const tareaPadreId = document.getElementById('tarea-id').innerText;
-        fetch(`/tareas/${tareaPadreId}/removeSubtarea/${subtareaId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert('Error al eliminar la subtarea.');
-            }
-        });
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-=======
     function redirigirEditarComentario(button) {
         const idComentario = button.getAttribute('data-id-comentario');
         window.location.href = `/comentarios/editar/${idComentario}`;
@@ -216,8 +196,27 @@
         }
     }
 </script>
-</body>
->>>>>>> 90a3c2a803695290cc00018d60a69da34f51dcef
+<script>
+    function removeSubtarea(subtareaId) {
+        if (confirm("¿Estás seguro de que quieres eliminar esta subtarea de la lista?")) {
+            const tareaPadreId = document.getElementById('tarea-id').innerText;
+            fetch(`/tareas/${tareaPadreId}/removeSubtarea/${subtareaId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar la subtarea.');
+                }
+            });
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 </body>
 </html>
