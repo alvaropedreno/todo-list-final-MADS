@@ -13,19 +13,30 @@
         <div class="col-md-8">
             <!-- Card de formulario -->
             <div class="card shadow-sm border-0">
+                <!-- Botón para regresar -->
+                <div class="text-end">
+                    <a class="btn btn-outline-primary" th:href="@{/tareas/{id}(id=${tarea.getId()})}">
+                        <i class="bi bi-arrow-left"></i> Volver a la tarea
+                    </a>
+                </div>
                 <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">
                         <i class="bi bi-plus-circle"></i> Añadir Subtareas
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/tareas/{id}/subtareas/nueva(id=${tarea.getId()})}" method="post">
-                        <div th:each="tareaUsuario : ${tareasUsuario}">
-                            <input type="checkbox" name="subtareasIds" th:value="${tareaUsuario.getId()}"/>
-                            <label th:text="${tareaUsuario.getTitulo()}"></label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Añadir Subtareas</button>
-                    </form>
+                    <div th:if="${#lists.isEmpty(tareasUsuario)}">
+                        <p>No hay subtareas disponibles para añadir.</p>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(tareasUsuario)}">
+                        <form th:action="@{/tareas/{id}/subtareas/nueva(id=${tarea.getId()})}" method="post">
+                            <div th:each="tareaUsuario : ${tareasUsuario}">
+                                <input type="checkbox" name="subtareasIds" th:value="${tareaUsuario.getId()}"/>
+                                <label th:text="${tareaUsuario.getTitulo()}"></label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Añadir Subtareas</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

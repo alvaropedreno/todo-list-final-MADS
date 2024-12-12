@@ -160,7 +160,13 @@ public class TareaController {
 
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
         List<TareaData> tareasUsuario = tareaService.allTareasUsuario(usuarioLoggeado.getId());
-        tareasUsuario.removeIf(t -> t.getId().equals(idTarea)); // Excluir la tarea padre
+        // Excluir la tarea padre
+        tareasUsuario.removeIf(t -> t.getId().equals(idTarea));
+        // Excluir subtareas
+        List<TareaData> subtareas = tareaService.getSubtareas(idTarea);
+        for (TareaData subtarea : subtareas) {
+            tareasUsuario.removeIf(t -> t.getId().equals(subtarea.getId()));
+        }
 
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("tarea", tarea);
