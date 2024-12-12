@@ -136,10 +136,7 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuarioId());
 
-        List<Tarea> subtareas = tareaService.getSubtareas(idTarea);
-        if (subtareas == null) {
-            subtareas = new ArrayList<>(); // Initialize the list if it is null
-        }
+        List<TareaData> subtareas = tareaService.getSubtareas(idTarea);
 
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
         UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
@@ -150,6 +147,62 @@ public class TareaController {
         model.addAttribute("subtareas", subtareas);
         model.addAttribute("autor", autor.getNombre());
         return "detallesTarea";
+    }
+
+    @GetMapping("/tareas/{id}/subtareas/nueva")
+    public String formNuevaSubtarea(@PathVariable(value="id") Long idTarea, Model model, HttpSession session) {
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
+        List<TareaData> tareasUsuario = tareaService.allTareasUsuario(usuarioLoggeado.getId());
+        tareasUsuario.removeIf(t -> t.getId().equals(idTarea)); // Excluir la tarea padre
+
+        model.addAttribute("usuarioLoggeado", usuarioLoggeado);
+        model.addAttribute("tarea", tarea);
+        model.addAttribute("tareasUsuario", tareasUsuario);
+        model.addAttribute("subtareaData", new TareaData());
+        return "formNuevaSubtarea";
+    }
+
+    @DeleteMapping("/tareas/{idPadre}/removeSubtarea/{id}")
+    @ResponseBody
+    public String removeSubtarea(@PathVariable(value="idPadre") Long idTareaPadre, @PathVariable(value="id") Long idSubtarea, HttpSession session) {
+        TareaData subtarea = tareaService.findById(idSubtarea);
+        if (subtarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        TareaData tareaPadre = tareaService.findById(idTareaPadre);
+        if (tareaPadre == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(subtarea.getUsuarioId());
+
+        tareaService.removeSubtarea(idSubtarea, idTareaPadre);
+        return "";
+    }
+
+    @PostMapping("/tareas/{id}/subtareas/nueva")
+    public String nuevaSubtarea(@PathVariable(value="id") Long idTarea, @RequestParam List<Long> subtareasIds,
+                                Model model, RedirectAttributes flash, HttpSession session) {
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        for (Long subtareaId : subtareasIds) {
+            tareaService.addSubtarea(idTarea, subtareaId);
+        }
+        flash.addFlashAttribute("mensaje", "Subtareas añadidas correctamente");
+        return "redirect:/tareas/" + idTarea;
     }
 
 }

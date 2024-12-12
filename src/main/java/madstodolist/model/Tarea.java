@@ -35,8 +35,8 @@ public class Tarea implements Serializable {
     @JoinColumn(name = "tarea_padre_id")
     private Tarea tareaPadre;
 
-    @OneToMany(mappedBy = "tareaPadre", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tarea> subtareas = new ArrayList<>(); // Initialize the list
+    @OneToMany(mappedBy = "tareaPadre", cascade = CascadeType.ALL)
+    private List<Tarea> subtareas; // Initialize the list
 
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
@@ -46,12 +46,14 @@ public class Tarea implements Serializable {
     public Tarea(Usuario usuario, String titulo) {
         this.titulo = titulo;
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.subtareas = new ArrayList<>();
     }
 
     public Tarea(Usuario usuario, String titulo, String descripcion) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.subtareas = new ArrayList<>();
     }
 
     // Getters y setters básicos
@@ -102,12 +104,12 @@ public class Tarea implements Serializable {
     }
 
     public void addSubtarea(Tarea subtarea) {
-        subtareas.add(subtarea);
+        this.subtareas.add(subtarea);
         subtarea.setTareaPadre(this);
     }
 
     public void removeSubtarea(Tarea subtarea) {
-        subtareas.remove(subtarea);
+        this.subtareas.remove(subtarea);
         subtarea.setTareaPadre(null);
     }
 

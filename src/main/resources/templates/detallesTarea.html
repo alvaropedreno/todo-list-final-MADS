@@ -47,11 +47,17 @@
                     <!-- Subtareas -->
                     <div class="mb-3">
                         <h5><i class="bi bi-list-task"></i> Subtareas:</h5>
-                        <!-- Botón para mostrar/ocultar subtareas -->
-                        <button class="btn btn-secondary mb-2" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#subtareasTable" aria-expanded="false" aria-controls="subtareasTable">
-                            Mostrar subtareas
-                        </button>
+                        <!-- Botón para añadir subtarea -->
+                        <div class="text-end mb-3">
+                            <a class="btn btn-success btn-sm" th:href="@{/tareas/{id}/subtareas/nueva(id=${tarea.getId()})}">
+                                <i class="bi bi-plus-circle"></i> Añadir Subtarea
+                            </a>
+                            <!-- Botón para mostrar/ocultar subtareas -->
+                            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#subtareasTable" aria-expanded="false" aria-controls="subtareasTable">
+                                Mostrar subtareas
+                            </button>
+                        </div>
                         <!-- Contenido colapsable -->
                         <div class="collapse" id="subtareasTable">
                             <div class="card card-body border-0 shadow-sm">
@@ -80,9 +86,9 @@
                                                th:href="@{/tareas/{id}/editar(id=${subtarea.id})}">
                                                 Editar
                                             </a>
-                                            <button class="btn btn-danger btn-sm" style="cursor: pointer;"
-                                                    th:onclick="'del(\'/tareas/' + ${subtarea.id} + '\')'">
-                                                Borrar
+                                            <button class="btn btn-warning btn-sm" style="cursor: pointer;"
+                                                    th:onclick="'removeSubtarea(' + ${subtarea.id} + ')'">
+                                                Eliminar
                                             </button>
                                             <a class="btn btn-success btn-sm"
                                                th:href="@{/tareas/{id}(id=${subtarea.id})}">
@@ -94,6 +100,8 @@
                                 </table>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -103,6 +111,25 @@
 
 <!-- Scripts -->
 <div th:replace="fragments::javascript"></div>
-</body>
+<script>
+    function removeSubtarea(subtareaId) {
+        const tareaPadreId = document.getElementById('tarea-id').innerText;
+        fetch(`/tareas/${tareaPadreId}/removeSubtarea/${subtareaId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error al eliminar la subtarea.');
+            }
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
+</body>
 </html>
