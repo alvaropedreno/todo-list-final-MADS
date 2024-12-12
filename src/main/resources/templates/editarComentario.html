@@ -50,7 +50,7 @@
             <p class="text-danger ps-3" th:if="${remainingTime != null}" th:text="${remainingTime}"></p>
             <p class="text-danger ps-3" th:if="${overdueTime != null}" th:text="${overdueTime}"></p>
           </div>
-          <form method="post" th:action="@{/comentario/{id}/editar(id=${comentario.id})}">
+          <form method="post" th:action="@{/comentario/editar/{id}(id=${comentario.id})}">
             <div class="form-group mb-3">
               <label for="comentario" class="form-label">Comentario:</label>
               <textarea class="form-control rounded-3 shadow-sm" id="comentario" name="comentario" rows="3" th:text="${comentario.comentario}" required></textarea>
