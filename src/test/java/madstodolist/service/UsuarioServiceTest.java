@@ -1,11 +1,15 @@
 package madstodolist.service;
 
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Usuario;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -176,4 +180,79 @@ public class UsuarioServiceTest {
 
         assertThat(existeAdmin).isTrue();
     }
+
+    @Test
+    public void servicioCambiarPassword() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // WHEN
+        // Cambiamos la contraseña
+        usuarioService.cambiarPassword(usuarioId, "123", "nuevaPassword123");
+
+        // THEN
+        // El usuario puede iniciar sesión con la nueva contraseña, pero no con la antigua
+        UsuarioService.LoginStatus loginStatusConNueva = usuarioService.login("user@ua", "nuevaPassword123");
+        UsuarioService.LoginStatus loginStatusConAntigua = usuarioService.login("user@ua", "123");
+
+        assertThat(loginStatusConNueva).isEqualTo(UsuarioService.LoginStatus.LOGIN_OK);
+        assertThat(loginStatusConAntigua).isEqualTo(UsuarioService.LoginStatus.ERROR_PASSWORD);
+    }
+
+    @Test
+    public void servicioCambiarPasswordExcepcionSiPasswordActualEsIncorrecta() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // WHEN, THEN
+        // Intentar cambiar la contraseña con la actual incorrecta lanza una excepción
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.cambiarPassword(usuarioId, "passwordIncorrecta", "nuevaPassword123");
+        });
+    }
+
+    @Test
+    public void servicioEditarUsuario() throws IOException {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioBD();
+
+        // Datos actualizados
+        UsuarioData usuarioActualizado = new UsuarioData();
+        usuarioActualizado.setId(usuarioId);
+        usuarioActualizado.setNombre("Nombre Actualizado");
+        usuarioActualizado.setEmail("nuevo.email@ua");
+
+        // WHEN
+        // Editamos los datos del usuario
+        usuarioService.editarUsuario(usuarioActualizado);
+
+        // THEN
+        // Los datos se actualizan correctamente en la BD
+        UsuarioData usuarioBD = usuarioService.findById(usuarioId);
+        assertThat(usuarioBD.getNombre()).isEqualTo("Nombre Actualizado");
+        assertThat(usuarioBD.getEmail()).isEqualTo("nuevo.email@ua");
+    }
+
+    @Test
+    public void crearUsuarioConFoto() throws Exception {
+        // GIVEN
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        usuario.setNombre("Juan Gutiérrez");
+
+        byte[] fotoContenido = "Contenido de prueba".getBytes();
+        usuario.setFoto(fotoContenido);
+
+        // THEN
+        assertThat(usuario.getFoto()).isEqualTo(fotoContenido);
+    }
+
+
+
+
+
+
+
 }

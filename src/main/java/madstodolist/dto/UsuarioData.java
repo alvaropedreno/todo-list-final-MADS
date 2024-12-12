@@ -1,7 +1,10 @@
 package madstodolist.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
 import java.util.Objects;
+import javax.validation.constraints.PastOrPresent;
 
 // Data Transfer Object para la clase Usuario
 public class UsuarioData {
@@ -10,9 +13,15 @@ public class UsuarioData {
     private String email;
     private String nombre;
     private String password;
+    private String currentPassword; // Contraseña actual proporcionada por el usuario
+    private String newPassword;     // Nueva contraseña proporcionada por el usuario
+    private String confirmNewPassword; // Confirmar nueva contraseña
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura.")
     private Date fechaNacimiento;
     private Boolean admin = false;
     private Boolean bloqueado = false;
+    private byte[] foto;
+    private MultipartFile fotoMultipartFile;
 
     // Getters y setters
 
@@ -67,7 +76,44 @@ public class UsuarioData {
     public void setBloqueado(Boolean bloqueado){
         this.bloqueado = bloqueado;
     }
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
+    }
+    public MultipartFile getFotoMultipartFile() {
+        return fotoMultipartFile;
+    }
+
+    public void setFotoMultipartFile(MultipartFile fotoMultipartFile) {
+        this.fotoMultipartFile = fotoMultipartFile;
+    }
+
+    public byte[] getFoto() {
+        return foto;
+    }
+
+    public void setFoto(byte[] foto) {
+        this.foto = foto;
+    }
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)
 

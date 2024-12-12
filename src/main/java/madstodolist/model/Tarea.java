@@ -1,8 +1,15 @@
 package madstodolist.model;
 
+import com.sun.istack.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +28,9 @@ public class Tarea implements Serializable {
 
     private String descripcion;
 
+    @Nullable
+    private LocalDateTime deadline;
+
 
 
     @NotNull
@@ -30,6 +40,21 @@ public class Tarea implements Serializable {
     // el ID del usuario con el que está asociado una tarea
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "tarea", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
+
+    private String prioridad; // Valores: "Alta", "Media", "Baja"
+
+    private String estado; // Valores: "Pendiente", "En proceso", "Finalizada"
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
 
     @ManyToOne
     @JoinColumn(name = "tarea_padre_id")
@@ -45,17 +70,43 @@ public class Tarea implements Serializable {
     // Al crear una tarea la asociamos automáticamente a un usuario
     public Tarea(Usuario usuario, String titulo) {
         this.titulo = titulo;
-        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         this.subtareas = new ArrayList<>();
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
-    public Tarea(Usuario usuario, String titulo, String descripcion) {
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad) {
+        this.prioridad = prioridad;
         this.titulo = titulo;
         this.descripcion = descripcion;
+        this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
+        this.subtareas = new ArrayList<>();
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+    }
+
+    public Tarea(Usuario usuario, String titulo, String descripcion, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
+        this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
         this.subtareas = new ArrayList<>();
     }
 
+    public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad, LocalDateTime deadline) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.deadline = deadline;
+        this.prioridad = prioridad;
+        this.estado = "Pendiente";
+        this.comentarios = new ArrayList<>();
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.subtareas = new ArrayList<>();
+    }
+    
     // Getters y setters básicos
 
     public Long getId() {
@@ -65,6 +116,14 @@ public class Tarea implements Serializable {
     public String getDescripcion() {return descripcion;}
 
     public void setDescripcion(String descripcion) {this.descripcion = descripcion;}
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -78,10 +137,35 @@ public class Tarea implements Serializable {
         this.titulo = titulo;
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     // Getters y setters de la relación muchos-a-uno con Usuario
 
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void addComentario(Comentario comentario) {
+        comentarios.add(comentario);
+    }
+
+    public void removeComentario(Comentario comentario) {
+        comentarios.remove(comentario);
+        comentario.setTarea(null);
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
     // Método para establecer la relación con el usuario

@@ -200,4 +200,90 @@ public class TareaWebTest {
         this.mockMvc.perform(get(urlListado))
                 .andExpect(content().string(containsString("Limpiar cristales coche")));
     }
+
+    @Test
+    public void postNuevaTareaConPrioridad() throws Exception {
+        // GIVEN
+        // Un usuario con dos tareas en la BD
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN
+        // Realizamos la petición POST para añadir una nueva tarea con prioridad Media
+        String urlPost = "/usuarios/" + usuarioId + "/tareas/nueva";
+        String urlRedirect = "/usuarios/" + usuarioId + "/tareas";
+
+        this.mockMvc.perform(post(urlPost)
+                        .param("titulo", "Estudiar examen MADS")
+                        .param("descripcion", "Resolver ejercicios de ejemplo")
+                        .param("prioridad", "Media"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // THEN
+        // Verificamos que la tarea se añadió correctamente con la prioridad
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(allOf(
+                        containsString("Estudiar examen MADS"),
+                        containsString("Media")
+                )));
+    }
+
+    @Test
+    public void editarTareaModificaPrioridad() throws Exception {
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN
+        // Realizamos la petición POST para editar la prioridad de la tarea
+        String urlEditar = "/tareas/" + tareaId + "/editar";
+        String urlRedirect = "/usuarios/" + usuarioId + "/tareas";
+
+        this.mockMvc.perform(post(urlEditar)
+                        .param("titulo", "Lavar coche")
+                        .param("descripcion", "Lavar el coche con cera")
+                        .param("prioridad", "Alta"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // THEN
+        // Verificamos que la prioridad cambió
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(containsString("Alta")));
+    }
+
+    @Test
+    public void editarTareaModificaEstado() throws Exception{
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN
+        // Realizamos la petición POST para editar el estado de la tarea
+        String urlEditar = "/tareas/" + tareaId + "/editar";
+        String urlRedirect = "/usuarios/" + usuarioId + "/tareas";
+
+        this.mockMvc.perform(post(urlEditar)
+                        .param("titulo", "Lavar coche")
+                        .param("descripcion", "Lavar el coche con cera")
+                        .param("estado", "Finalizada"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(urlRedirect));
+
+        // THEN
+        // Verificamos que el estado cambió
+        this.mockMvc.perform(get(urlRedirect))
+                .andExpect(content().string(containsString("Finalizada")));
+    }
+
 }

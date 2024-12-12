@@ -147,4 +147,56 @@ public class TareaServiceTest {
         assertThat(tareaService.usuarioContieneTarea(usuarioId,tareaId)).isTrue();
     }
 
+    @Test
+    public void testNuevaTareaConPrioridad() {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+
+        // WHEN
+        // Creamos una nueva tarea asociada al usuario con prioridad Alta
+        TareaData nuevaTarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS", "Resolver ejercicios", "Alta");
+
+        // THEN
+        // Verificamos que la tarea tiene la prioridad correcta
+        assertThat(nuevaTarea).isNotNull();
+        assertThat(nuevaTarea.getPrioridad()).isEqualTo("Alta");
+    }
+
+    @Test
+    public void testModificarPrioridadTarea() {
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // Modificamos la prioridad de la tarea
+        tareaService.modificaPrioridadTarea(tareaId, "Baja");
+
+        // THEN
+        // Verificamos que la prioridad ha cambiado
+        TareaData tarea = tareaService.findById(tareaId);
+        assertThat(tarea).isNotNull();
+        assertThat(tarea.getPrioridad()).isEqualTo("Baja");
+    }
+
+    @Test
+    public void testModificarEstadoTarea(){
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // Modificamos el estado de la tarea
+        tareaService.modificaEstadoTarea(tareaId, "Finalizada");
+
+        // THEN
+        // Verificamos que el estado ha cambiado
+        TareaData tarea = tareaService.findById(tareaId);
+        assertThat(tarea).isNotNull();
+        assertThat(tarea.getEstado()).isEqualTo("Finalizada");
+    }
+
 }

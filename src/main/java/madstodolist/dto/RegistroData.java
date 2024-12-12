@@ -1,6 +1,7 @@
 package madstodolist.dto;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import java.util.Date;
@@ -14,6 +15,7 @@ public class RegistroData {
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date fechaNacimiento;
     private Boolean admin = false;
+    private MultipartFile foto;
 
     public String getEmail() {
         return eMail;
@@ -50,5 +52,9 @@ public class RegistroData {
     public Boolean getAdmin() {return admin;}
 
     public void setAdmin(Boolean admin) {this.admin = admin; }
+
+    public MultipartFile getFoto() {return foto;}
+
+    public void setFoto(MultipartFile foto) {this.foto = foto;}
 
 }

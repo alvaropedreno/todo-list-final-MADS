@@ -30,6 +30,17 @@
                         <th>Fecha de Nacimiento:</th>
                         <td th:text="${usuario.fechaNacimiento}">1990-05-12</td>
                     </tr>
+                    <tr>
+                        <th>Foto:</th>
+                        <td>
+                            <img th:if="${usuario.foto != null}"
+                                 th:src="@{'/usuario/' + ${usuario.id} + '/foto'}"
+                                 alt="Foto del usuario"
+                                 style="max-width: 150px; max-height: 150px;">
+                            <p th:if="${usuario.foto == null}">Sin foto</p>
+                        </td>
+                    </tr>
+
                     </tbody>
                 </table>
             </div>

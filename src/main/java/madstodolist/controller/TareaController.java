@@ -5,6 +5,8 @@ import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Comentario;
+import madstodolist.service.ComentarioService;
 import madstodolist.model.Tarea;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
@@ -15,11 +17,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class TareaController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TareaController.class);
 
     @Autowired
     UsuarioService usuarioService;
@@ -29,6 +37,9 @@ public class TareaController {
 
     @Autowired
     ManagerUserSession managerUserSession;
+
+    @Autowired
+    ComentarioService comentarioService;
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
@@ -53,11 +64,20 @@ public class TareaController {
     public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData,
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
+
+        logger.info("Received TareaData: titulo={}, descripcion={}, deadline={}",
+                tareaData.getTitulo(), tareaData.getDescripcion(), tareaData.getDeadline());
+
+        LocalDateTime deadline = tareaData.getDeadline();
+        if (deadline == null) {
+            logger.info("No deadline provided; setting it to null.");
+        }
+
         
-        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo(), tareaData.getDescripcion());
+        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo(), tareaData.getDescripcion(), tareaData.getPrioridad(), tareaData.getDeadline());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
-     }
+    }
 
     @GetMapping("/usuarios/{id}/tareas")
     public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
@@ -90,6 +110,8 @@ public class TareaController {
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
         tareaData.setDescripcion(tarea.getDescripcion());
+        tareaData.setPrioridad(tarea.getPrioridad());
+        tareaData.setEstado(tarea.getEstado());
         return "formEditarTarea";
     }
 
@@ -107,14 +129,14 @@ public class TareaController {
 
         tareaService.modificaTituloTarea(idTarea, tareaData.getTitulo());
         tareaService.modificarDescripcionTarea(idTarea, tareaData.getDescripcion());
+        tareaService.modificaPrioridadTarea(idTarea, tareaData.getPrioridad());
+        tareaService.modificaEstadoTarea(idTarea, tareaData.getEstado());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
         return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }
 
     @DeleteMapping("/tareas/{id}")
     @ResponseBody
-    // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
-    // de la petición HTTP, en lugar de una plantilla thymeleaf
     public String borrarTarea(@PathVariable(value="id") Long idTarea, RedirectAttributes flash, HttpSession session) {
         TareaData tarea = tareaService.findById(idTarea);
         if (tarea == null) {
@@ -141,6 +163,29 @@ public class TareaController {
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
         UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
 
+        if (tarea.getDeadline() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(now, tarea.getDeadline());
+            if (duration.isNegative()) {
+                duration = duration.negated();
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String overdueTime = String.format("La tarea está retrasada por %d días y %02d horas y %02d minutos", days, hours, minutes);
+                model.addAttribute("overdueTime", overdueTime);
+            } else {
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String remainingTime = String.format("Quedan %d días y %02d:%02d horas", days, hours, minutes);
+                model.addAttribute("remainingTime", remainingTime);
+            }
+        }
+
+        List<Comentario> comentarios = tarea.getComentarios();
+        comentarios.sort((c1, c2) -> c2.getFecha().compareTo(c1.getFecha())); // Ordenar por fecha descendente
+
+        model.addAttribute("comentarios", comentarios);
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("usuario", usuarioLoggeado);
         model.addAttribute("tarea", tarea);
@@ -211,5 +256,86 @@ public class TareaController {
         return "redirect:/tareas/" + idTarea;
     }
 
-}
 
+    @PostMapping("/tareas/{tareaId}/comentar")
+    public String agregarComentario(@PathVariable Long tareaId, @RequestParam String comentario) {
+        TareaData tarea = tareaService.findById(tareaId);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        Long idUsuario = tarea.getUsuarioId();
+
+        comprobarUsuarioLogeado(idUsuario);
+        comentarioService.crearComentario(tareaId, idUsuario, comentario);
+        return "redirect:/tareas/" + tareaId;
+    }
+
+    @DeleteMapping("/borrarComentario/{comentarioId}/enTarea/{tareaId}")
+    @ResponseBody
+    public String borrarComentario(@PathVariable Long comentarioId, @PathVariable Long tareaId) {
+        TareaData tarea = tareaService.findById(tareaId);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        Long idUsuario = tarea.getUsuarioId();
+
+        comprobarUsuarioLogeado(idUsuario);
+        comentarioService.borrarComentario(comentarioId);
+        return "";
+    }
+
+    @GetMapping("/comentarios/editar/{id}")
+    public String formEditarComentario(@PathVariable Long id, Model model) {
+        Comentario comentario = comentarioService.findById(id);
+        if (comentario == null) {
+            throw new RuntimeException("Comentario no encontrado");
+        }
+
+        Long idTarea = comentario.getTarea().getId();
+
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
+        UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
+
+        if (tarea.getDeadline() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(now, tarea.getDeadline());
+            if (duration.isNegative()) {
+                duration = duration.negated();
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String overdueTime = String.format("La tarea está retrasada por %d días y %02d horas y %02d minutos", days, hours, minutes);
+                model.addAttribute("overdueTime", overdueTime);
+            } else {
+                long days = duration.toDays();
+                long hours = duration.toHours() % 24;
+                long minutes = duration.toMinutes() % 60;
+                String remainingTime = String.format("Quedan %d días y %02d:%02d horas", days, hours, minutes);
+                model.addAttribute("remainingTime", remainingTime);
+            }
+        }
+
+        model.addAttribute("usuarioLoggeado", usuarioLoggeado);
+        model.addAttribute("usuario", usuarioLoggeado);
+        model.addAttribute("tarea", tarea);
+        model.addAttribute("autor", usuarioLoggeado);
+        model.addAttribute("comentario", comentario);
+        return "editarComentario";
+    }
+
+    @PostMapping("/comentario/editar/{id}")
+    public String editarComentario(@PathVariable Long id, @RequestParam String comentario) {
+        comentarioService.modificarComentario(id, comentario);
+        Comentario comentarioData = comentarioService.findById(id);
+        return "redirect:/tareas/" + comentarioData.getTarea().getId();
+    }
+}

@@ -1,10 +1,16 @@
 package madstodolist.dto;
 
+import madstodolist.model.Comentario;
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.Null;
 import madstodolist.model.Tarea;
 
 import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +23,13 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
     private String descripcion;
+    private String prioridad;
+    private String estado;
+
+    @Nullable
+    private LocalDateTime deadline;
+
+    private List<Comentario> comentarios;
     private Tarea tareaPadre;
     private List<Tarea> subtareas;
 
@@ -52,6 +65,38 @@ public class TareaData implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+    
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
     public Tarea getTareaPadre() {
