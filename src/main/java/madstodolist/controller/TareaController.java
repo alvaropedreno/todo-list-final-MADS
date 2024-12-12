@@ -264,7 +264,7 @@ public class TareaController {
         return "editarComentario";
     }
 
-    @PostMapping("/comentario/{id}/editar")
+    @PostMapping("/comentario/editar/{id}")
     public String editarComentario(@PathVariable Long id, @RequestParam String comentario) {
         comentarioService.modificarComentario(id, comentario);
         Comentario comentarioData = comentarioService.findById(id);
