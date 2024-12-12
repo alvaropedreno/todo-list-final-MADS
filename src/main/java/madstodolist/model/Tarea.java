@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,6 +30,8 @@ public class Tarea implements Serializable {
 
     @Nullable
     private LocalDateTime deadline;
+
+
 
     @NotNull
     // Relación muchos-a-uno entre tareas y usuario
@@ -52,6 +56,13 @@ public class Tarea implements Serializable {
         this.prioridad = prioridad;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "tarea_padre_id")
+    private Tarea tareaPadre;
+
+    @OneToMany(mappedBy = "tareaPadre", cascade = CascadeType.ALL)
+    private List<Tarea> subtareas; // Initialize the list
+
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
     public Tarea() {}
@@ -61,6 +72,7 @@ public class Tarea implements Serializable {
         this.titulo = titulo;
         this.estado = "Pendiente";
         this.comentarios = new ArrayList<>();
+        this.subtareas = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -70,6 +82,7 @@ public class Tarea implements Serializable {
         this.descripcion = descripcion;
         this.estado = "Pendiente";
         this.comentarios = new ArrayList<>();
+        this.subtareas = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
@@ -80,6 +93,7 @@ public class Tarea implements Serializable {
         this.estado = "Pendiente";
         this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.subtareas = new ArrayList<>();
     }
 
     public Tarea(Usuario usuario, String titulo, String descripcion, String prioridad, LocalDateTime deadline) {
@@ -90,6 +104,7 @@ public class Tarea implements Serializable {
         this.estado = "Pendiente";
         this.comentarios = new ArrayList<>();
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
+        this.subtareas = new ArrayList<>();
     }
     
     // Getters y setters básicos
@@ -162,6 +177,32 @@ public class Tarea implements Serializable {
             // Añade la tarea a la lista de tareas del usuario
             usuario.addTarea(this);
         }
+    }
+
+    public List<Tarea> getSubtareas() {
+        return subtareas;
+    }
+
+    public void setSubtareas(List<Tarea> subtareas) {
+        this.subtareas = subtareas;
+    }
+
+    public void addSubtarea(Tarea subtarea) {
+        this.subtareas.add(subtarea);
+        subtarea.setTareaPadre(this);
+    }
+
+    public void removeSubtarea(Tarea subtarea) {
+        this.subtareas.remove(subtarea);
+        subtarea.setTareaPadre(null);
+    }
+
+    public void setTareaPadre(Tarea tareaPadre) {
+        this.tareaPadre = tareaPadre;
+    }
+
+    public Tarea getTareaPadre() {
+        return tareaPadre;
     }
 
     @Override

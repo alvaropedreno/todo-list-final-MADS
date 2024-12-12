@@ -174,4 +174,42 @@ public class TareaService {
         }
         return usuario.getTareas().contains(tarea);
     }
+
+    @Transactional
+    public List<TareaData> getSubtareas(Long idTarea) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id");
+        }
+        return tarea.getSubtareas().stream()
+                .map(t -> modelMapper.map(t, TareaData.class))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addSubtarea(Long idTarea, Long idSubtarea) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        Tarea subtarea = tareaRepository.findById(idSubtarea).orElse(null);
+        if (tarea == null || subtarea == null) {
+            throw new TareaServiceException("No existe tarea o subtarea con id");
+        }
+        tarea.addSubtarea(subtarea);
+        tareaRepository.save(tarea);
+    }
+
+    @Transactional
+    public void removeSubtarea(Long idSubtarea, Long idTareaPadre) {
+        Tarea subtarea = tareaRepository.findById(idSubtarea).orElse(null);
+        if (subtarea == null) {
+            throw new TareaServiceException("No existe subtarea con id");
+        }
+
+        Tarea tareaPadre = tareaRepository.findById(idTareaPadre).orElse(null);
+        if (tareaPadre == null) {
+            throw new TareaServiceException("No existe tarea padre con id");
+        }
+
+        tareaPadre.removeSubtarea(subtarea);
+        tareaRepository.save(tareaPadre);
+    }
 }

@@ -7,6 +7,7 @@ import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import madstodolist.model.Comentario;
 import madstodolist.service.ComentarioService;
+import madstodolist.model.Tarea;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +158,8 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuarioId());
 
+        List<TareaData> subtareas = tareaService.getSubtareas(idTarea);
+
         UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
         UsuarioData autor = usuarioService.findById(tarea.getUsuarioId());
 
@@ -185,9 +189,73 @@ public class TareaController {
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("usuario", usuarioLoggeado);
         model.addAttribute("tarea", tarea);
+        model.addAttribute("subtareas", subtareas);
         model.addAttribute("autor", autor.getNombre());
         return "detallesTarea";
     }
+
+    @GetMapping("/tareas/{id}/subtareas/nueva")
+    public String formNuevaSubtarea(@PathVariable(value="id") Long idTarea, Model model, HttpSession session) {
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        UsuarioData usuarioLoggeado = usuarioService.findById(tarea.getUsuarioId());
+        List<TareaData> tareasUsuario = tareaService.allTareasUsuario(usuarioLoggeado.getId());
+        // Excluir la tarea padre
+        tareasUsuario.removeIf(t -> t.getId().equals(idTarea));
+        // Excluir subtareas
+        List<TareaData> subtareas = tareaService.getSubtareas(idTarea);
+        for (TareaData subtarea : subtareas) {
+            tareasUsuario.removeIf(t -> t.getId().equals(subtarea.getId()));
+        }
+
+        model.addAttribute("usuarioLoggeado", usuarioLoggeado);
+        model.addAttribute("tarea", tarea);
+        model.addAttribute("tareasUsuario", tareasUsuario);
+        model.addAttribute("subtareaData", new TareaData());
+        return "formNuevaSubtarea";
+    }
+
+    @DeleteMapping("/tareas/{idPadre}/removeSubtarea/{id}")
+    @ResponseBody
+    public String removeSubtarea(@PathVariable(value="idPadre") Long idTareaPadre, @PathVariable(value="id") Long idSubtarea, HttpSession session) {
+        TareaData subtarea = tareaService.findById(idSubtarea);
+        if (subtarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        TareaData tareaPadre = tareaService.findById(idTareaPadre);
+        if (tareaPadre == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(subtarea.getUsuarioId());
+
+        tareaService.removeSubtarea(idSubtarea, idTareaPadre);
+        return "";
+    }
+
+    @PostMapping("/tareas/{id}/subtareas/nueva")
+    public String nuevaSubtarea(@PathVariable(value="id") Long idTarea, @RequestParam List<Long> subtareasIds,
+                                Model model, RedirectAttributes flash, HttpSession session) {
+        TareaData tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
+
+        for (Long subtareaId : subtareasIds) {
+            tareaService.addSubtarea(idTarea, subtareaId);
+        }
+        flash.addFlashAttribute("mensaje", "Subtareas añadidas correctamente");
+        return "redirect:/tareas/" + idTarea;
+    }
+
 
     @PostMapping("/tareas/{tareaId}/comentar")
     public String agregarComentario(@PathVariable Long tareaId, @RequestParam String comentario) {

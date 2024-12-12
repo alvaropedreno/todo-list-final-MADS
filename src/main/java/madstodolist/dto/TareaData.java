@@ -4,8 +4,13 @@ import madstodolist.model.Comentario;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Null;
+import madstodolist.model.Tarea;
+
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +30,8 @@ public class TareaData implements Serializable {
     private LocalDateTime deadline;
 
     private List<Comentario> comentarios;
+    private Tarea tareaPadre;
+    private List<Tarea> subtareas;
 
     // Getters y setters
 
@@ -90,6 +97,22 @@ public class TareaData implements Serializable {
 
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public Tarea getTareaPadre() {
+        return tareaPadre;
+    }
+
+    public void setTareaPadre(Tarea tareaPadre) {
+        this.tareaPadre = tareaPadre;
+    }
+
+    public List<Tarea> getSubtareas() {
+        return subtareas;
+    }
+
+    public void setSubtareas(List<Tarea> subtareas) {
+        this.subtareas = subtareas;
     }
 
     // Sobreescribimos equals y hashCode para que dos tareas sean iguales
