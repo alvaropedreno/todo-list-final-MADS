@@ -105,6 +105,7 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
         }
         List<TareaData> tareas = usuario.getTareas().stream()
+                .filter(tarea -> tarea.getDeadline() != null)
                 .filter(tarea -> tarea.getDeadline().getMonthValue() == month && tarea.getDeadline().getYear() == year)
                 .map(tarea -> modelMapper.map(tarea, TareaData.class))
                 .collect(Collectors.toList());
