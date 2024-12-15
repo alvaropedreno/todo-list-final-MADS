@@ -99,6 +99,20 @@ public class TareaService {
     }
 
     @Transactional(readOnly = true)
+    public List<TareaData> allTareasUsuarioByMonth(Long idUsuario, int month, int year) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
+        }
+        List<TareaData> tareas = usuario.getTareas().stream()
+                .filter(tarea -> tarea.getDeadline().getMonthValue() == month && tarea.getDeadline().getYear() == year)
+                .map(tarea -> modelMapper.map(tarea, TareaData.class))
+                .collect(Collectors.toList());
+        Collections.sort(tareas, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+        return tareas;
+    }
+
+    @Transactional(readOnly = true)
     public TareaData findById(Long tareaId) {
         logger.debug("Buscando tarea " + tareaId);
         Tarea tarea = tareaRepository.findById(tareaId).orElse(null);
