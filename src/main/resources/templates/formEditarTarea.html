@@ -24,7 +24,7 @@
                 <select class="form-control" id="estado" name="estado" required th:field="*{estado}">
                     <option value="Pendiente" th:selected="${tareaData.estado == 'Pendiente'}">Pendiente</option>
                     <option value="En progreso" th:selected="${tareaData.estado == 'En progreso'}">En progreso</option>
-                    <option value="Completada" th:selected="${tareaData.estado == 'Completada'}">Completada</option>
+                    <option value="Finalizada" th:selected="${tareaData.estado == 'Finalizada'}">Finalizada</option>
                 </select>
             </div>
             <div class="form-group">

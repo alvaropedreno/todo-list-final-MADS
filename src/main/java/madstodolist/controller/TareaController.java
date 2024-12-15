@@ -80,15 +80,29 @@ public class TareaController {
     }
 
     @GetMapping("/usuarios/{id}/tareas")
-    public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
+    public String listadoTareas(@PathVariable(value="id") Long idUsuario,
+                                @RequestParam(value = "estado", required = false) String estado,
+                                @RequestParam(value = "prioridad", required = false) String prioridad,
+                                @RequestParam(value = "titulo", required = false) String titulo,
+                                Model model, HttpSession session) {
 
         comprobarUsuarioLogeado(idUsuario);
-
         UsuarioData usuarioLoggeado = usuarioService.findById(idUsuario);
-        List<TareaData> tareas = tareaService.allTareasUsuario(idUsuario);
+        List<TareaData> tareas;
+
+        if (estado != null || prioridad != null || titulo != null) {
+            tareas = tareaService.filtrarTareasUsuario(idUsuario, prioridad, estado, titulo);
+
+        } else {
+            tareas = tareaService.allTareasUsuario(idUsuario);
+        }
+
         model.addAttribute("usuarioLoggeado", usuarioLoggeado);
         model.addAttribute("usuario", usuarioLoggeado);
         model.addAttribute("tareas", tareas);
+        model.addAttribute("estado", estado);
+        model.addAttribute("prioridad", prioridad);
+        model.addAttribute("titulo", titulo);
         return "listaTareas";
     }
 
