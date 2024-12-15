@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head (titulo='Calendario')"></head>
+<body>
+<div th:replace="fragments :: navbar (usuarioLoggeado=${usuarioLoggeado != null ? usuarioLoggeado : null})"></div>
+
+<div class="container-fluid">
+    <h1>Calendario de Tareas</h1>
+
+    <!-- formulario para elegir el mes y el año -->
+
+    <form method="get" th:action="@{/calendario/{id}(id=${usuarioLoggeado.id})}">
+        <div class="form-row align-items-end">
+            <div class="col-2">
+                <label for="mes">Mes</label>
+                <select id="mes" name="mes" class="form-control">
+                    <option selected>Elije...</option>
+                    <option value="1" th:selected="${mes == 1}">Enero</option>
+                    <option value="2" th:selected="${mes == 2}">Febrero</option>
+                    <option value="3" th:selected="${mes == 3}">Marzo</option>
+                    <option value="4" th:selected="${mes == 4}">Abril</option>
+                    <option value="5" th:selected="${mes == 5}">Mayo</option>
+                    <option value="6" th:selected="${mes == 6}">Junio</option>
+                    <option value="7" th:selected="${mes == 7}">Julio</option>
+                    <option value="8" th:selected="${mes == 8}">Agosto</option>
+                    <option value="9" th:selected="${mes == 9}">Septiembre</option>
+                    <option value="10" th:selected="${mes == 10}">Octubre</option>
+                    <option value="11" th:selected="${mes == 11}">Noviembre</option>
+                    <option value="12" th:selected="${mes == 12}">Diciembre</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <label for="anio">Año</label>
+                <select id="anio" name="anio" class="form-control">
+                    <option selected>Elije...</option>
+                    <option th:each="anio : ${#numbers.sequence(2020,2030)}"
+                            th:value="${anio}"
+                            th:text="${anio}"
+                            th:selected="${anio == anioSelected}"></option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mt-6">Cambiar</button>
+            </div>
+        </div>
+    </form>
+    <br>
+
+
+    <div class="calendar">
+        <!-- Encabezados de días -->
+        <div class="header">Lunes</div>
+        <div class="header">Martes</div>
+        <div class="header">Miércoles</div>
+        <div class="header">Jueves</div>
+        <div class="header">Viernes</div>
+        <div class="header">Sábado</div>
+        <div class="header">Domingo</div>
+
+        <!-- Generación del calendario -->
+        <div th:each="i : ${#numbers.sequence(1,primerDia)}">
+            <div class="day vacio"></div>
+        </div>
+        <div th:each="i : ${#numbers.sequence(1,ultimoDia)}">
+            <div th:class="'day ' + (${ocupado[T(java.lang.Integer).valueOf(i)]} == 'tarea' ? 'day-task' : '')"
+                 th:text="${i}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div>
+        <h3>Lista de tareas</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Tarea</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Prioridad</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tarea : ${sustareas}">
+                    <td th:text="${tarea.getId()}"></td>
+                    <td th:text="${tarea.getTitulo()}"></td>
+                    <td th:text="${tarea.getDeadline()}"></td>
+                    <td th:text="${tarea.getEstado()}"></td>
+                    <td th:text="${tarea.getPrioridad()}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}(id=${tarea.getId()})}">Ver Detalles</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div th:replace="fragments::javascript"></div>
+
+<style>
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background-color: #ddd;
+    }
+    .calendar .header {
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+    }
+    .calendar .day {
+        text-align: center;
+        padding: 10px;
+        background-color: white;
+        border: 1px solid #ddd;
+    }
+    .calendar .day-task {
+        background-color: #ffebcc;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .calendar .vacio {
+        background-color: #dddddd;
+    }
+</style>
+</body>
+</html>
