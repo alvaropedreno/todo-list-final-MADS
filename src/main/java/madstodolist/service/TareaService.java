@@ -184,6 +184,17 @@ public class TareaService {
         return modelMapper.map(tarea, TareaData.class);
     }
 
+    @Transactional
+    public TareaData modificaDeadlineTarea(Long idTarea, LocalDateTime nuevoDeadline) {
+        logger.debug("Modificando deadline de la tarea " + idTarea);
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.setDeadline(nuevoDeadline);
+        tarea = tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
 
     @Transactional
     public void borraTarea(Long idTarea) {
