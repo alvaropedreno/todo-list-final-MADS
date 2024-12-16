@@ -114,6 +114,21 @@ public class TareaService {
     }
 
     @Transactional(readOnly = true)
+    public List<TareaData> filtrarTareasUsuario(Long idUsuario, String prioridad, String estado, String titulo) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).
+                orElseThrow(() -> new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas "));
+        List<TareaData> tareas = usuario.getTareas().stream()
+                .filter(tarea -> (titulo == null || tarea.getTitulo().contains(titulo)))
+                .filter(tarea -> (estado == null || tarea.getEstado().contains(estado)))
+                .filter(tarea -> (prioridad == null || tarea.getPrioridad().contains(prioridad)))
+                .map(tarea -> modelMapper.map(tarea, TareaData.class))
+                .collect(Collectors.toList());
+
+        Collections.sort(tareas, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+        return tareas;
+    }
+
+    @Transactional(readOnly = true)
     public TareaData findById(Long tareaId) {
         logger.debug("Buscando tarea " + tareaId);
         Tarea tarea = tareaRepository.findById(tareaId).orElse(null);

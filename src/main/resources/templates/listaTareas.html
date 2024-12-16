@@ -13,6 +13,36 @@
         </div>
     </div>
 
+    <form method="get" th:action="@{/usuarios/{id}/tareas(id=${usuario.id})}">
+        <div class="form-row align-items-end">
+            <div class="col-2">
+                <label for="titulo">Titulo</label>
+                <input type="text" id="titulo" placeholder="Introduce titulo" name="titulo" class="form-control" th:value="${titulo}">
+            </div>
+            <div class="col-2">
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" class="form-control">
+                    <option selected value="" th:selected="${estado == null}">Elije...</option>
+                    <option value="Pendiente" th:selected="${estado == 'Pendiente'}">Pendiente</option>
+                    <option value="En progreso" th:selected="${estado == 'En progreso'}">En progreso</option>
+                    <option value="Finalizada" th:selected="${estado == 'Finalizada'}">Finalizada</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <label for="prioridad">Prioridad</label>
+                <select id="prioridad" name="prioridad" class="form-control">
+                    <option selected value="" th:selected="${prioridad == null}">Elije...</option>
+                    <option value="Baja" th:selected="${prioridad == 'Baja'}">Baja</option>
+                    <option value="Media" th:selected="${prioridad == 'Media'}">Media</option>
+                    <option value="Alta" th:selected="${prioridad == 'Alta'}">Alta</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mt-6">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
     <div class="row mt-3">
         <div class="col">
             <table class="table table-striped">
