@@ -35,6 +35,10 @@
                     <option value="Baja" th:selected="${tareaData.prioridad == 'Baja'}">Baja</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="deadline">Fecha y hora de deadline:</label>
+                <input class="form-control" id="deadline" name="deadline" th:value="${formattedDeadline}" type="datetime-local"/>
+            </div>
         <button class="btn btn-primary" type="submit">Modificar tarea</button>
         <a class="btn btn-link" th:href="@{/usuarios/{id}/tareas(id=${tarea.usuarioId})}">Cancelar</a>
         </div>

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -112,6 +113,10 @@ public class TareaController {
         tareaData.setDescripcion(tarea.getDescripcion());
         tareaData.setPrioridad(tarea.getPrioridad());
         tareaData.setEstado(tarea.getEstado());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        String formattedDeadline = tarea.getDeadline().format(formatter);
+        model.addAttribute("formattedDeadline", formattedDeadline);
         return "formEditarTarea";
     }
 
@@ -131,6 +136,7 @@ public class TareaController {
         tareaService.modificarDescripcionTarea(idTarea, tareaData.getDescripcion());
         tareaService.modificaPrioridadTarea(idTarea, tareaData.getPrioridad());
         tareaService.modificaEstadoTarea(idTarea, tareaData.getEstado());
+        tareaService.modificaDeadlineTarea(idTarea, tareaData.getDeadline());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
         return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }
