@@ -45,55 +45,60 @@
         </div>
     </form>
     <br>
+    <div>
+        <div class="row">
+            <div class="col">
+                <div class="calendar">
+                    <!-- Encabezados de días -->
+                    <div class="header">Lunes</div>
+                    <div class="header">Martes</div>
+                    <div class="header">Miércoles</div>
+                    <div class="header">Jueves</div>
+                    <div class="header">Viernes</div>
+                    <div class="header">Sábado</div>
+                    <div class="header">Domingo</div>
 
-
-    <div class="calendar">
-        <!-- Encabezados de días -->
-        <div class="header">Lunes</div>
-        <div class="header">Martes</div>
-        <div class="header">Miércoles</div>
-        <div class="header">Jueves</div>
-        <div class="header">Viernes</div>
-        <div class="header">Sábado</div>
-        <div class="header">Domingo</div>
-
-        <!-- Generación del calendario -->
-        <div th:each="i : ${#numbers.sequence(1,primerDia)}">
-            <div class="day vacio"></div>
-        </div>
-        <div th:each="i : ${#numbers.sequence(1,ultimoDia)}">
-            <div th:class="'day ' + (${ocupado[T(java.lang.Integer).valueOf(i)]} == 'tarea' ? 'day-task' : '')"
-                 th:text="${i}">
+                    <!-- Generación del calendario -->
+                    <div th:each="i : ${#numbers.sequence(1,primerDia)}">
+                        <div class="day vacio"></div>
+                    </div>
+                    <div th:each="i : ${#numbers.sequence(1,ultimoDia)}">
+                        <div th:class="'day ' + (${ocupado[T(java.lang.Integer).valueOf(i)]} == 'tarea' ? 'day-task' : '')"
+                             th:text="${i}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div>
+                    <h3>Lista de tareas</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Tarea</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Accion</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tarea : ${sustareas}">
+                            <td th:text="${tarea.getId()}"></td>
+                            <td th:text="${tarea.getTitulo()}"></td>
+                            <td th:text="${tarea.getDeadline()}"></td>
+                            <td th:text="${tarea.getEstado()}"></td>
+                            <td th:text="${tarea.getPrioridad()}"></td>
+                            <td>
+                                <a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}(id=${tarea.getId()})}">Ver Detalles</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    <br>
-    <div>
-        <h3>Lista de tareas</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Tarea</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Prioridad</th>
-                    <th>Accion</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="tarea : ${sustareas}">
-                    <td th:text="${tarea.getId()}"></td>
-                    <td th:text="${tarea.getTitulo()}"></td>
-                    <td th:text="${tarea.getDeadline()}"></td>
-                    <td th:text="${tarea.getEstado()}"></td>
-                    <td th:text="${tarea.getPrioridad()}"></td>
-                    <td>
-                        <a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}(id=${tarea.getId()})}">Ver Detalles</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 
 </div>
