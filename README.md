@@ -4,7 +4,7 @@ Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docent
 
 ## Enlace Trello
 
-[https://trello.com/b/NgfNsLTa/todolist-mads](https://trello.com/invite/b/6750309ac3f1f3bbec48dd54/ATTIb8289daf3f97dbf0d76fff01102186452BECBD99/todolist-mads)
+https://trello.com/b/X5CwclxH/todolist-mads
 
 ## Enlace Dock
 
