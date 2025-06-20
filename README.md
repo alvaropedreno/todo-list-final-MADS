@@ -1,3 +1,8 @@
+> ⚠️ **Nota importante:**
+> Este reopositorio es una copia pública del original, que anteriormente era privado y contenía información adicional como tableros de *Projects* (Kanban), *Issues* y *Pull Requests*.
+> Debido al cambio de visibilidad, parte de ese contenido colaborativo se ha perdido y no se ve reflejado en esta versión.
+> Sin embargo, el código fuente y la estructura del proyecto permanecen intactos.
+
 # Aplicación inicial ToDoList
 
 Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wlengua=es&wcodasi=34037&scaca=2024-25) usando Spring Boot y plantillas Thymeleaf.
